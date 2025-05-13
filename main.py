@@ -3,14 +3,16 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-from account import account
+from api import Api
+from menu import Menu
 
 load_dotenv()  # loads the configs from .env
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-BASE_URL = 'https://api.vultr.com/v2/'
-SECRET_KEY = str(os.getenv('API_KEY'))
+api = Api(str(os.getenv('API_KEY')))
+menu = Menu(api)
+menu.main_menu()
 
-print(account(BASE_URL, SECRET_KEY))
+# account(BASE_URL, SECRET_KEY)
 
