@@ -1,6 +1,7 @@
 
 from endpoints.account import get_account_info
-from endpoints.instances import get_instances
+from endpoints.instance import get_instances
+from endpoints.firewall import get_firewalls
 
 class Menu():
     def __init__(self, api):
@@ -16,10 +17,9 @@ class Menu():
             case '1':
                 self.account()
             case '2':
-                self.instances()
+                self.instance()
             case '3':
-                print('Coming Soon!')
-                self.main_menu()
+                self.firewall()
             case '4':
                 exit()
             case _:
@@ -40,7 +40,7 @@ class Menu():
                 print('Invalid Option!')
                 self.account()
 
-    def instances(self):
+    def instance(self):
         print('1. Show Instances')
         print('2. Go Back')
         option = input("What area?: ")
@@ -48,6 +48,20 @@ class Menu():
             case '1':
                 get_instances(self.api)
                 self.instances()
+            case '2':
+                self.main_menu()
+            case _:
+                print('Invalid Option!')
+                self.instances()
+
+    def firewall(self):
+        print('1. Show Firewalls')
+        print('2. Go Back')
+        option = input("What area?: ")
+        match option:
+            case '1':
+                get_firewalls(self.api)
+                self.firewall()
             case '2':
                 self.main_menu()
             case _:
