@@ -29,7 +29,7 @@ class Menu():
     def account(self):
         print('1. Show Account Details')
         print('2. Go Back')
-        option = input("What area?: ")
+        option = input("What action?: ")
         match option:
             case '1':
                 get_account_info(self.api)
@@ -43,7 +43,7 @@ class Menu():
     def instance(self):
         print('1. Show Instances')
         print('2. Go Back')
-        option = input("What area?: ")
+        option = input("What action?: ")
         match option:
             case '1':
                 get_instances(self.api)
