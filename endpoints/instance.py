@@ -2,7 +2,7 @@ from util import utc_to_local
 
 def get_instances(api):
     url = 'instances'
-    data = api.call_api_with_token(url)
+    data = api.api_get(url)
     inst_list = []
     inst_count = 1
     for i in data['instances']:

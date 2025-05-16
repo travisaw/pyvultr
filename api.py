@@ -5,15 +5,25 @@ class Api:
         self.token = token
         self.base_url = 'https://api.vultr.com/v2/'
 
-    def call_api_with_token(self, url):
+    def api_get(self, url):
         call_url = self.base_url + url
-        headers = {
+        headers = self.get_headers()    
+        response = requests.get(call_url, headers=headers)
+        return self.process_response(response)
+
+    def api_post(self, url, data):
+        call_url = self.base_url + url
+        headers = self.get_headers()    
+        response = requests.post(call_url, json=data, headers=headers)
+        return self.process_response(response)
+
+    def get_headers(self):
+        return {
             'Authorization': f'Bearer {self.token}',
             'Content-Type': 'application/json' # Adjust content type if needed
         }
     
-        response = requests.get(call_url, headers=headers)
-    
+    def process_response(response):
         if response.status_code == 200:
             return response.json()
         else:

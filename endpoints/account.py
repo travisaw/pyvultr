@@ -2,7 +2,7 @@ from util import utc_to_local
 
 def get_account_info(api):
     url = 'account'
-    data = api.call_api_with_token(url)
+    data = api.api_get(url)
     print('Name: ', data['account']['name'])
     print('Email: ', data['account']['email'])
     print('Balance: ', data['account']['balance'])

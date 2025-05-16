@@ -2,7 +2,7 @@ from util import utc_to_local
 
 def get_firewalls(api):
     url = 'firewalls'
-    data = api.call_api_with_token(url)
+    data = api.api_get(url)
     # print(data)
     fw_list = []
     fw_count = 1
@@ -21,3 +21,9 @@ def get_firewalls(api):
     # print('Pending Charges: ', data['account']['pending_charges'])
     # print('Last Payment Date: ', utc_to_local(data['account']['last_payment_date']))
     # print('Last Payment Amount: ', data['account']['last_payment_amount'])
+
+def get_firewall(api):
+    pass
+
+def create_firewall(api, description):
+    pass
