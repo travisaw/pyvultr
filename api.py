@@ -17,13 +17,19 @@ class Api:
         response = requests.post(call_url, json=data, headers=headers)
         return self.process_response(response)
 
+    def api_delete(self, url):
+        call_url = self.base_url + url
+        headers = self.get_headers()    
+        response = requests.delete(call_url, headers=headers)
+        return self.process_response(response)
+    
     def get_headers(self):
         return {
             'Authorization': f'Bearer {self.token}',
             'Content-Type': 'application/json' # Adjust content type if needed
         }
     
-    def process_response(response):
+    def process_response(self, response):
         if response.status_code == 200:
             return response.json()
         else:
