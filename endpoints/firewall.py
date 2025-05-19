@@ -1,4 +1,5 @@
 from util import utc_to_local, valid_option
+from tabulate import tabulate
 
 class Firewall:
     firewall_id = str('')
@@ -30,12 +31,15 @@ class Firewall:
     def get_firewall(self):
         url = 'firewalls/' + self.firewall_id
         data = self.api.api_get(url)
-        print('Description: ', data['firewall_group']['description'])
-        print('Date Created: ', utc_to_local(data['firewall_group']['date_created']))
-        print('Date Updated: ', utc_to_local(data['firewall_group']['date_modified']))
-        print('Instance Count: ', data['firewall_group']['instance_count'])
-        print('Rule Count: ', data['firewall_group']['rule_count'])
-        print('Max Rule Count: ', data['firewall_group']['max_rule_count'])
+        result = [
+            ['Description: ', data['firewall_group']['description']],
+            ['Date Created: ', utc_to_local(data['firewall_group']['date_created'])],
+            ['Date Updated: ', utc_to_local(data['firewall_group']['date_modified'])],
+            ['Instance Count: ', data['firewall_group']['instance_count']],
+            ['Rule Count: ', data['firewall_group']['rule_count']],
+            ['Max Rule Count: ', data['firewall_group']['max_rule_count']]
+        ]
+        print(tabulate(result))
 
     def create_firewall(self, description):
         url = 'firewalls'
@@ -51,7 +55,18 @@ class Firewall:
     def get_firewall_rules(self):
         url = 'firewalls/' + self.firewall_id + '/rules'
         data = self.api.api_get(url)
-        print(data)
+        result = []
+        header = ['Type', 'Action', 'Protocol', 'Ip', 'Notes']
+        for i in data['firewall_rules']:
+            row = [
+                i['type'],
+                i['action'],
+                i['protocol'],
+                i['subnet'] + '/' + str(i['subnet_size']),
+                i['notes']
+            ]
+            result.append(row)
+        print(tabulate(result, header))
 
     def delete_all_firewall_rules(self):
         pass
