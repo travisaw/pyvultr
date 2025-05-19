@@ -12,4 +12,4 @@ def get_account_info(api):
         ['Last Payment Date: ', utc_to_local(data['account']['last_payment_date'])],
         ['Last Payment Amount: ', data['account']['last_payment_amount']]
     ]
-    print(tabulate(result)) 
+    print(tabulate(result))
