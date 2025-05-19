@@ -6,7 +6,7 @@ from endpoints.firewall import Firewall
 class Menu():
     def __init__(self, api):
         self.api = api
-        self.obj_fw = Firewall()
+        self.obj_fw = Firewall(self.api)
 
     def main_menu(self):
         print('1. Account')
@@ -60,23 +60,35 @@ class Menu():
         print('2. Show Selected Firewall')
         print('3. Create Firewall')
         print('4. Delete Firewall')
-        print('5. Go Back')
+        print('5. Show Firewall Rules')
+        print('6. Delete All Firewall Rules')
+        print('7. Add Current IP to Firewall Rules')
+        print('8. Go Back')
         option = input("What area?: ")
         match option:
             case '1':
-                self.obj_fw.get_firewalls(self.api)
+                self.obj_fw.get_firewalls()
                 self.firewall()
             case '2':
-                self.obj_fw.get_firewall(self.api)
+                self.obj_fw.get_firewall()
                 self.firewall()
             case '3':
                 fw_name = input("New Firewall Name?: ")
-                self.obj_fw.create_firewall(self.api, fw_name)
+                self.obj_fw.create_firewall(fw_name)
                 self.firewall()
             case '4':
-                self.obj_fw.delete_firewall(self.api)
+                self.obj_fw.delete_firewall()
                 self.firewall()
             case '5':
+                self.obj_fw.get_firewall_rules()
+                self.firewall()
+            case '6':
+                self.obj_fw.delete_all_firewall_rules()
+                self.firewall()
+            case '7':
+                self.obj_fw.add_ip_to_firewall_rules()
+                self.firewall()
+            case '8':
                 self.main_menu()
             case _:
                 print('Invalid Option!')

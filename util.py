@@ -25,17 +25,14 @@ def utc_to_local(utc_string):
     return local_dt_string
 
 def valid_option(option, options):
-    if not (isinstance(option, int) and not isinstance(option, bool)):
+    try:
+        i_option = int(option)
+    except ValueError:
         print(f"{option} is not an integer")
         return False
-    if not (isinstance(option, int) and not isinstance(option, bool)):
-        print(option)
-        print('NO INT')
-        return False
-    i_option = int(option)
 
     if not 0 <= i_option < len(options):
-        print('NO OPT')
+        print('Selection is out of range. Select valid option.')
         return False
 
     return True
