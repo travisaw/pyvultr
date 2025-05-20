@@ -1,9 +1,11 @@
-from util import utc_to_local, valid_option
+from util import utc_to_local, valid_option, ip6_network_prefix
 from tabulate import tabulate
+from requests import get
 
 class Firewall:
     firewall_id = str('')
     firewall_desc = str('')
+    firewall_rules = []
 
     def __init__(self, api):
         self.api = api
@@ -27,6 +29,7 @@ class Firewall:
             return
         self.firewall_id = fw_list[int(option) - 1][0]
         self.firewall_desc = fw_list[int(option) - 1][1]
+        self.get_firewall_rules()
 
     def get_firewall(self):
         url = 'firewalls/' + self.firewall_id
@@ -56,7 +59,6 @@ class Firewall:
         url = 'firewalls/' + self.firewall_id + '/rules'
         data = self.api.api_get(url)
         result = []
-        header = ['Type', 'Action', 'Protocol', 'Ip', 'Notes']
         for i in data['firewall_rules']:
             row = [
                 i['type'],
@@ -66,10 +68,18 @@ class Firewall:
                 i['notes']
             ]
             result.append(row)
-        print(tabulate(result, header))
+        self.firewall_rules = result
+
+    def print_firewall_rules(self):
+        header = ['Type', 'Action', 'Protocol', 'Ip', 'Notes']
+        print(tabulate(self.firewall_rules, header))
 
     def delete_all_firewall_rules(self):
         pass
 
     def add_ip_to_firewall_rules(self):
-        pass
+        ip4 = get('https://api.ipify.org').content.decode('utf8')
+        ip6 = get('https://api64.ipify.org').content.decode('utf8')
+        print('My public IP address is: {}'.format(ip4))
+        print('My public IP address is: {}'.format(ip6))
+        print('My public IP address is: {}'.format(ip6_network_prefix(ip6)))

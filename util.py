@@ -1,6 +1,7 @@
 from datetime import datetime
 import pytz
 import tzlocal
+import ipaddress
 
 def utc_to_local(utc_string):
     utc_format = "%Y-%m-%dT%H:%M:%S%z"
@@ -36,3 +37,8 @@ def valid_option(option, options):
         return False
 
     return True
+
+def ip6_network_prefix(ip6_address):
+    ipv6_interface = ipaddress.IPv6Interface(ip6_address)
+    return ipv6_interface.network
+

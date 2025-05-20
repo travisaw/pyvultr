@@ -80,7 +80,7 @@ class Menu():
                 self.obj_fw.delete_firewall()
                 self.firewall()
             case '5':
-                self.obj_fw.get_firewall_rules()
+                self.obj_fw.print_firewall_rules()
                 self.firewall()
             case '6':
                 self.obj_fw.delete_all_firewall_rules()
