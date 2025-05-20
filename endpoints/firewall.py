@@ -32,7 +32,7 @@ class Firewall:
         self.get_firewall_rules()
 
     def get_firewall(self):
-        url = 'firewalls/' + self.firewall_id
+        url = f'firewalls/{self.firewall_id}'
         data = self.api.api_get(url)
         result = [
             ['Description: ', data['firewall_group']['description']],
@@ -51,35 +51,77 @@ class Firewall:
         print(data)
 
     def delete_firewall(self):
-        url = 'firewalls/' + self.firewall_id
+        url = f'firewalls/{self.firewall_id}'
         data = self.api.api_delete(url)
         print(data)
 
     def get_firewall_rules(self):
-        url = 'firewalls/' + self.firewall_id + '/rules'
+        url = f'firewalls/{self.firewall_id}/rules'
         data = self.api.api_get(url)
+        # print(data)
         result = []
         for i in data['firewall_rules']:
             row = [
+                i['id'],
                 i['type'],
+                i['ip_type'],
                 i['action'],
                 i['protocol'],
-                i['subnet'] + '/' + str(i['subnet_size']),
-                i['notes']
+                i['port'],
+                i['subnet'],
+                i['subnet_size'],
+                i['source'],
+                i['notes'],
             ]
             result.append(row)
         self.firewall_rules = result
 
     def print_firewall_rules(self):
-        header = ['Type', 'Action', 'Protocol', 'Ip', 'Notes']
-        print(tabulate(self.firewall_rules, header))
+        self.get_firewall_rules()
+        result = []
+        for i in self.firewall_rules:
+            row = [
+                i[1],
+                i[3],
+                i[4],
+                i[6] + '/' + str(i[7]),
+                i[5],
+                i[9],
+            ]
+            result.append(row)
+        header = ['Type', 'Action', 'Protocol', 'Ip', 'Port', 'Notes']
+        print(tabulate(result, header))
 
     def delete_all_firewall_rules(self):
-        pass
+        self.get_firewall_rules()
+        for i in self.firewall_rules:
+            url = f'firewalls/{self.firewall_id}/rules/{i[0]}'
+            data = self.api.api_delete(url)
+            print(data)
 
     def add_ip_to_firewall_rules(self):
         ip4 = get('https://api.ipify.org').content.decode('utf8')
-        ip6 = get('https://api64.ipify.org').content.decode('utf8')
+        # ip6 = get('https://api64.ipify.org').content.decode('utf8')
         print('My public IP address is: {}'.format(ip4))
-        print('My public IP address is: {}'.format(ip6))
-        print('My public IP address is: {}'.format(ip6_network_prefix(ip6)))
+        # print('My public IP address is: {}'.format(ip6))
+        # print('My public IP address is: {}'.format(ip6_network_prefix(ip6)))
+
+        params = (
+            ('tcp', '1:65535',),
+            ('udp', '1:65535',),
+            ('icmp', '',),
+        )
+
+        url = f'firewalls/{self.firewall_id}/rules'
+        for p in params:
+            body = {
+                    "ip_type": "v4",
+                    "protocol": p[0],
+                    "port": p[1],
+                    "subnet": ip4,
+                    "subnet_size": 32,
+                    "source": "",
+                    "notes": "Example Firewall Rule"
+                }
+            data = self.api.api_post(url, body)
+            print(data)
