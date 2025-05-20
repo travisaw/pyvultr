@@ -30,7 +30,8 @@ class Api:
         }
     
     def process_response(self, response):
-        if response.status_code == 200:
-            return response.json()
+        output = response.json()
+        if response.status_code >= 200 and response.status_code < 300:
+            return output
         else:
-            return f"Error: {response.status_code}, {response.text}"
+            return {'error': response.status_code, 'error_detail': output}

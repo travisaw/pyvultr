@@ -62,6 +62,13 @@ def valid_option(option, options, base_value):
 
     return True
 
+def valid_output(output):
+    if output.get('error'):
+        print(f'Error {output['error_detail']['status']}: {output['error_detail']['error']}')
+        return False
+    else:
+        return True
+
 def ip6_network_prefix(ip6_address):
     ipv6_interface = ipaddress.IPv6Interface(ip6_address)
     return ipv6_interface.network
