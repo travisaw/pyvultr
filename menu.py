@@ -2,6 +2,7 @@
 from endpoints.account import get_account_info
 from endpoints.instance import Instance
 from endpoints.firewall import Firewall
+from util import print_input_menu
 
 class Menu():
     def __init__(self, api):
@@ -10,11 +11,13 @@ class Menu():
         self.obj_fw = Firewall(self.api)
 
     def main_menu(self):
-        print('1. Account')
-        print('2. Instances')
-        print('3. Firewall')
-        print('4. Exit')
-        option = input("What area?: ")
+        options = [
+            {'id': 1, 'name': 'Account'},
+            {'id': 2, 'name': 'Instances'},
+            {'id': 3, 'name': 'Firewall'},
+            {'id': 4, 'name': 'Exit'},
+        ]
+        option, inst_list = print_input_menu(options, 'What area?: ', 'id', 'name', False)
         match option:
             case '1':
                 self.account()
@@ -24,29 +27,27 @@ class Menu():
                 self.firewall()
             case '4':
                 exit()
-            case _:
-                print('Invalid Option!')
-                self.main_menu()
 
     def account(self):
-        print('1. Show Account Details')
-        print('2. Go Back')
-        option = input("What action?: ")
+        options = [
+            {'id': 1, 'name': 'Show Account Details'},
+            {'id': 2, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
         match option:
             case '1':
                 get_account_info(self.api)
                 self.account()
             case '2':
                 self.main_menu()
-            case _:
-                print('Invalid Option!')
-                self.account()
 
     def instance(self):
-        print('1. Show Instances')
-        print('2. Show Instance')
-        print('3. Go Back')
-        option = input("What action?: ")
+        options = [
+            {'id': 1, 'name': 'Show Instances'},
+            {'id': 2, 'name': 'Show Instance'},
+            {'id': 3, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
         match option:
             case '1':
                 self.obj_i.get_instances()
@@ -56,20 +57,19 @@ class Menu():
                 self.instance()
             case '3':
                 self.main_menu()
-            case _:
-                print('Invalid Option!')
-                self.instance()
 
     def firewall(self):
-        print('1. Show Firewalls')
-        print('2. Show Selected Firewall')
-        print('3. Create Firewall')
-        print('4. Delete Firewall')
-        print('5. Show Firewall Rules')
-        print('6. Delete All Firewall Rules')
-        print('7. Add Current IP to Firewall Rules')
-        print('8. Go Back')
-        option = input("What area?: ")
+        options = [
+            {'id': 1, 'name': 'Show Firewalls'},
+            {'id': 2, 'name': 'Show Selected Firewall'},
+            {'id': 3, 'name': 'Create Firewall'},
+            {'id': 4, 'name': 'Delete Firewall'},
+            {'id': 5, 'name': 'Show Firewall Rules'},
+            {'id': 6, 'name': 'Delete All Firewall Rules'},
+            {'id': 7, 'name': 'Add Current IP to Firewall Rules'},
+            {'id': 8, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
         match option:
             case '1':
                 self.obj_fw.get_firewalls()
@@ -95,8 +95,5 @@ class Menu():
                 self.firewall()
             case '8':
                 self.main_menu()
-            case _:
-                print('Invalid Option!')
-                self.instances()
 
                 

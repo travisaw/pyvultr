@@ -1,4 +1,4 @@
-from util import utc_to_local, valid_option, ip6_network_prefix
+from util import utc_to_local, print_input_menu, ip6_network_prefix
 from tabulate import tabulate
 from requests import get
 
@@ -13,20 +13,7 @@ class Firewall:
     def get_firewalls(self):
         url = 'firewalls'
         data = self.api.api_get(url)
-        # print(data)
-        fw_list = []
-        fw_count = 1
-        for i in data['firewall_groups']:
-            if fw_count == 1:
-                print('0. None')
-            inst = [i['id'], i['description']]
-            fw_list.append(inst)
-            print(str(fw_count) + '. '+ i['description'])
-            fw_count += 1
-        option = input("What firewall to select?: ")
-        if not valid_option(option, fw_list):
-            print("Invalid Option")
-            return
+        option, fw_list = print_input_menu(data['firewall_groups'], 'What firewall to select?: ', 'id', 'description', True)
         self.firewall_id = fw_list[int(option) - 1][0]
         self.firewall_desc = fw_list[int(option) - 1][1]
         self.get_firewall_rules()
