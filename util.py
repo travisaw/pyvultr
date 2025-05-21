@@ -72,3 +72,15 @@ def valid_response(output):
 def ip6_network_prefix(ip6_address):
     ipv6_interface = ipaddress.IPv6Interface(ip6_address)
     return ipv6_interface.network
+
+def format_bytes(size_in_bytes):
+    # Define the units
+    units = ["bytes", "KB", "MB", "GB", "TB", "PB"]
+    power = 1024
+    n = 0
+
+    while size_in_bytes >= power and n < len(units) - 1:
+        size_in_bytes /= power
+        n += 1
+
+    return f"{size_in_bytes:.2f} {units[n]}"
