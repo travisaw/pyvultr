@@ -1,4 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_output
+from util import utc_to_local, print_input_menu, valid_response
 from tabulate import tabulate
 
 class Instance:
@@ -10,13 +10,14 @@ class Instance:
     def get_instances(self):
         url = 'instances'
         data = self.api.api_get(url)
-        option, inst_list = print_input_menu(data['instances'], 'What instance to select?: ', 'id', 'label', True)
-        self.instance_id = inst_list[int(option) - 1][0]
+        if valid_response(data):
+            option, inst_list = print_input_menu(data['instances'], 'What instance to select?: ', 'id', 'label', True)
+            self.instance_id = inst_list[int(option) - 1][0]
 
     def get_instance(self):
         url = f'instances/{self.instance_id}'
         data = self.api.api_get(url)
-        if valid_output(data):
+        if valid_response(data):
             print(tabulate([
                 # ['id', data['instance']['id']],
                 ['os', data['instance']['os']],

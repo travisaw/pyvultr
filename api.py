@@ -30,7 +30,12 @@ class Api:
         }
     
     def process_response(self, response):
-        output = response.json()
+        try:
+            output = response.json()
+            # print(output)
+        except requests.exceptions.JSONDecodeError:
+            output = {'info': 'No response body.', 'status': response.status_code}
+
         if response.status_code >= 200 and response.status_code < 300:
             return output
         else:

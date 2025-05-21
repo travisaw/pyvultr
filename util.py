@@ -62,9 +62,9 @@ def valid_option(option, options, base_value):
 
     return True
 
-def valid_output(output):
+def valid_response(output):
     if output.get('error'):
-        print(f'Error {output['error_detail']['status']}: {output['error_detail']['error']}')
+        print(f' {output['error_detail']['status']}: {output['error_detail']['error']}')
         return False
     else:
         return True
