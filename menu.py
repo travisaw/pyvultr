@@ -8,9 +8,9 @@ from util import print_input_menu
 class Menu():
     def __init__(self, api):
         self.api = api
-        self.obj_i = Instance(self.api)
         self.obj_fw = Firewall(self.api)
         self.obj_ss = Snapshot(self.api)
+        self.obj_i = Instance(self.api, self.obj_fw, self.obj_ss)
 
     def main_menu(self):
         options = [
@@ -50,7 +50,9 @@ class Menu():
         options = [
             {'id': 1, 'name': 'Show Instances'},
             {'id': 2, 'name': 'Show Instance'},
-            {'id': 3, 'name': 'Go Back'},
+            {'id': 3, 'name': 'Create Instance'},
+            {'id': 4, 'name': 'Delete Instance'},
+            {'id': 5, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
         match option:
@@ -58,9 +60,15 @@ class Menu():
                 self.obj_i.get_instances()
                 self.instance()
             case '2':
-                self.obj_i.get_instance()
+                self.obj_i.print_instance()
                 self.instance()
             case '3':
+                self.obj_i.create_instance()
+                self.instance()
+            case '4':
+                self.obj_i.delete_instance()
+                self.instance()
+            case '5':
                 self.main_menu()
 
     def firewall(self):
@@ -80,7 +88,7 @@ class Menu():
                 self.obj_fw.get_firewalls()
                 self.firewall()
             case '2':
-                self.obj_fw.get_firewall()
+                self.obj_fw.print_firewall()
                 self.firewall()
             case '3':
                 fw_name = input("New Firewall Name?: ")
@@ -119,15 +127,15 @@ class Menu():
                 self.obj_ss.get_snapshot()
                 self.snapshot()
             case '3':
-                fw_name = input("New snapshot Name?: ")
-                self.obj_ss.create_snapshot(fw_name)
+                ss_name = input("New snapshot Name?: ")
+                self.obj_ss.create_snapshot(ss_name, self.obj_i.instance_id)
                 self.snapshot()
             case '4':
                 self.obj_ss.delete_snapshot()
                 self.snapshot()
             case '5':
-                self.obj_ss.update_snapshot()
+                ss_name = input("New snapshot Name?: ")
+                self.obj_ss.update_snapshot(ss_name)
                 self.snapshot()
             case '6':
                 self.main_menu()
-                

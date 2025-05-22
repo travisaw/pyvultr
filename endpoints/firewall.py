@@ -24,6 +24,12 @@ class Firewall:
         url = f'firewalls/{self.firewall_id}'
         data = self.api.api_get(url)
         if valid_response(data):
+            self.firewall_desc = data['firewall_group']['description']
+    
+    def print_firewall(self):
+        url = f'firewalls/{self.firewall_id}'
+        data = self.api.api_get(url)
+        if valid_response(data):
             result = [
                 ['Description: ', data['firewall_group']['description']],
                 ['Date Created: ', utc_to_local(data['firewall_group']['date_created'])],

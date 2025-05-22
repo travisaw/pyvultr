@@ -17,6 +17,12 @@ class Api:
         response = requests.post(call_url, json=data, headers=headers)
         return self.process_response(response)
 
+    def api_put(self, url, data):
+        call_url = self.base_url + url
+        headers = self.get_headers()    
+        response = requests.put(call_url, json=data, headers=headers)
+        return self.process_response(response)
+
     def api_delete(self, url):
         call_url = self.base_url + url
         headers = self.get_headers()    
