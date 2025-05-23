@@ -1,16 +1,19 @@
 
-from endpoints.account import get_account_info
-from endpoints.instance import Instance
-from endpoints.firewall import Firewall
-from endpoints.snapshot import Snapshot
+from endpoints.vultr.account import get_account_info
+from endpoints.vultr.instance import Instance
+from endpoints.vultr.firewall import Firewall
+from endpoints.vultr.snapshot import Snapshot
+from endpoints.cloudflare.zone import Zone
 from util import print_input_menu
 
 class Menu():
-    def __init__(self, api):
-        self.api = api
-        self.obj_fw = Firewall(self.api)
-        self.obj_ss = Snapshot(self.api)
-        self.obj_i = Instance(self.api, self.obj_fw, self.obj_ss)
+    def __init__(self, vultr_api, cloudflare_api):
+        self.vultr_api = vultr_api
+        self.cloudflare_api = cloudflare_api
+        self.obj_fw = Firewall(self.vultr_api)
+        self.obj_ss = Snapshot(self.vultr_api)
+        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss)
+        self.obj_z = Zone(self.cloudflare_api)
 
     def main_menu(self):
         options = [
@@ -18,7 +21,8 @@ class Menu():
             {'id': 2, 'name': 'Instances'},
             {'id': 3, 'name': 'Firewall'},
             {'id': 4, 'name': 'Snapshot'},
-            {'id': 5, 'name': 'Exit'},
+            {'id': 5, 'name': 'DNS Zones'},
+            {'id': 6, 'name': 'Exit'},
         ]
         option, inst_list = print_input_menu(options, 'What area?: ', 'id', 'name', False)
         match option:
@@ -31,6 +35,8 @@ class Menu():
             case '4':
                 self.snapshot()
             case '5':
+                self.dns_zone()
+            case '6':
                 exit()
 
     def account(self):
@@ -41,7 +47,7 @@ class Menu():
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
         match option:
             case '1':
-                get_account_info(self.api)
+                get_account_info(self.vultr_api)
                 self.account()
             case '2':
                 self.main_menu()
@@ -138,4 +144,21 @@ class Menu():
                 self.obj_ss.update_snapshot(ss_name)
                 self.snapshot()
             case '6':
+                self.main_menu()
+
+    def dns_zone(self):
+        options = [
+            {'id': 1, 'name': 'Show Zones'},
+            {'id': 2, 'name': 'Verify Tokens'},
+            {'id': 3, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
+        match option:
+            case '1':
+                self.obj_z.get_zones()
+                self.dns_zone()
+            case '2':
+                self.obj_z.verify_token()
+                self.dns_zone()
+            case '3':
                 self.main_menu()
