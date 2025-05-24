@@ -9,8 +9,8 @@ class Cloudflare:
     def api_get(self, url):
         call_url = self.base_url + url
         headers = self.get_headers()
-        print(headers)
-        print(call_url)
+        # print(headers)
+        # print(call_url)
         response = requests.get(call_url, headers=headers)
         return self.process_response(response)
 

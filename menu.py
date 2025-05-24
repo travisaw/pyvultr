@@ -149,8 +149,10 @@ class Menu():
     def dns_zone(self):
         options = [
             {'id': 1, 'name': 'Show Zones'},
-            {'id': 2, 'name': 'Verify Tokens'},
-            {'id': 3, 'name': 'Go Back'},
+            {'id': 2, 'name': 'Show Selected Zone'},
+            {'id': 3, 'name': 'Show Zone DNS Records'},
+            {'id': 4, 'name': 'Verify Tokens'},
+            {'id': 5, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
         match option:
@@ -158,7 +160,14 @@ class Menu():
                 self.obj_z.get_zones()
                 self.dns_zone()
             case '2':
-                self.obj_z.verify_token()
+                self.obj_z.print_zone()
                 self.dns_zone()
             case '3':
+                # self.obj_z.print_dns_records()
+                self.obj_z.select_dns_record_of_type('A')
+                self.dns_zone()
+            case '4':
+                self.obj_z.verify_token()
+                self.dns_zone()
+            case '5':
                 self.main_menu()
