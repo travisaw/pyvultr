@@ -8,11 +8,13 @@ class Instance:
     instance_tags = []
     instance_ip4 = ''
 
-    def __init__(self, api, fw_obj, ss_obj, cf_obj):
+    def __init__(self, api, fw_obj, ss_obj, cf_obj, p_obj, r_obj):
         self.api = api
         self.fw_obj = fw_obj
         self.ss_obj = ss_obj
         self.cf_obj = cf_obj
+        self.p_obj = p_obj
+        self.r_obj = r_obj
         colorama_init(autoreset=True)
 
     def get_instances(self):
@@ -69,11 +71,12 @@ class Instance:
 
     def create_instance_prompt(self):
         label = input('Hostname/Label?:')
+        self.r_obj.get_preferred_region()
         tags = ['pyvultr']
         self.fw_obj.get_firewalls()
         self.ss_obj.get_snapshots()
         body = {
-            "region": "atl",
+            "region": self.r_obj.region_id,
             "plan": "vc2-1c-1gb",
             "label": label,
             "hostname": label,

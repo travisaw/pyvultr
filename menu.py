@@ -2,6 +2,8 @@
 from endpoints.vultr.account import get_account_info
 from endpoints.vultr.instance import Instance
 from endpoints.vultr.firewall import Firewall
+from endpoints.vultr.plan import Plan
+from endpoints.vultr.region import Region
 from endpoints.vultr.snapshot import Snapshot
 from endpoints.cloudflare.zone import Zone
 from util import print_input_menu
@@ -11,9 +13,11 @@ class Menu():
         self.vultr_api = vultr_api
         self.cloudflare_api = cloudflare_api
         self.obj_fw = Firewall(self.vultr_api)
+        self.obj_p = Plan(self.vultr_api)
+        self.obj_r = Region(self.vultr_api)
         self.obj_ss = Snapshot(self.vultr_api)
-        self.obj_z = Zone(self.cloudflare_api)
-        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_z)
+        self.obj_cf = Zone(self.cloudflare_api)
+        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r)
 
     def main_menu(self):
         options = [

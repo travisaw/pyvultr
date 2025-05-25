@@ -1,6 +1,6 @@
 from util import print_input_menu, valid_response
 
-class plan:
+class Plan:
 
     def __init__(self, api):
         self.api = api
