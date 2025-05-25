@@ -15,7 +15,14 @@ class Zone:
     def verify_token(self):
         url = 'user/tokens/verify'
         data = self.api.api_get(url)
-        print(data)
+        result = [
+            ['Status: ', data['result']['status']],
+            ['Success: ', data['success']],
+            ['Errors: ', data['errors']],
+            ['Message: ', data['messages'][0]['message']],
+            ['Message Code: ', data['messages'][0]['code']],
+        ]
+        print(tabulate(result))
 
     def get_zones(self):
         url = 'zones'
@@ -29,22 +36,24 @@ class Zone:
     def get_zone(self):
         url = f'zones/{self.zone_id}'
         data = self.api.api_get(url)
-        self.zone_detail = data['result']
-        # if valid_response(data):
-        #     print(data)
+        if valid_response(data):
+            self.zone_detail = data['result']
 
     def print_zone(self):
-        result = [
-            ['Name: ', self.zone_detail['name']],
-            ['Status: ', self.zone_detail['status']],
-            ['Paused: ', self.zone_detail['paused']],
-            ['Name Servers: ', self.zone_detail['name_servers']],
-            ['Original Registrar: ', self.zone_detail['original_registrar']],
-            ['Date Created: ', utc_to_local(self.zone_detail['created_on'])],
-            ['Date Activated: ', utc_to_local(self.zone_detail['activated_on'])],
-            ['Date Updated: ', utc_to_local(self.zone_detail['modified_on'])],
-        ]
-        print(tabulate(result))
+        if 'name' in self.zone_detail:
+            result = [
+                ['Name: ', self.zone_detail['name']],
+                ['Status: ', self.zone_detail['status']],
+                ['Paused: ', self.zone_detail['paused']],
+                ['Name Servers: ', self.zone_detail['name_servers']],
+                ['Original Registrar: ', self.zone_detail['original_registrar']],
+                ['Date Created: ', utc_to_local(self.zone_detail['created_on'])],
+                ['Date Activated: ', utc_to_local(self.zone_detail['activated_on'])],
+                ['Date Updated: ', utc_to_local(self.zone_detail['modified_on'])],
+            ]
+            print(tabulate(result))
+        else:
+            print("NO ZONE SELECTED!")
 
     def get_dns_records(self):
         url = f'zones/{self.zone_id}/dns_records'
@@ -64,11 +73,32 @@ class Zone:
             result.append(row)
         print(tabulate(result, self.dns_records_header))
 
-    def select_dns_record_of_type(self, type):
+    def get_dns_record_of_type(self, type):
         result = []
         for i in self.dns_records:
-            if i['type'] == type:
+            if i['type'] == type or type == '':
                 row = {'id': i['id'], 'name': i['name']}
                 result.append(row)
-        option, inst_list = print_input_menu(result, 'What entry to select?: ', 'id', 'name', True)
-        self.dns_record_id = option
+        option, dns_list = print_input_menu(result, 'What entry to select?: ', 'id', 'name', True)
+        self.dns_record_id = dns_list[int(option) - 1][0]
+
+    def print_dns_record(self):
+        match = next((d for d in self.dns_records if d.get('id') == self.dns_record_id), None)
+        result = [
+            ['Name: ', match['name']],
+            ['Type: ', match['type']],
+            ['Content: ', match['content']],
+            ['Proxiable: ', match['proxiable']],
+            ['Proxied: ', match['proxied']],
+            ['TTL: ', match['ttl']],
+            ['Settings: ', match['settings']],
+            ['Meta: ', match['meta']],
+            ['Comment: ', match['comment']],
+            ['Tags: ', match['tags']],
+            ['Created On: ', utc_to_local(match['created_on'])],
+            ['Modified On: ', utc_to_local(match['modified_on'])],
+        ]
+        print(tabulate(result))
+
+    def create_dns_record(self):
+        pass

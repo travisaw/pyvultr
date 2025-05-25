@@ -151,8 +151,11 @@ class Menu():
             {'id': 1, 'name': 'Show Zones'},
             {'id': 2, 'name': 'Show Selected Zone'},
             {'id': 3, 'name': 'Show Zone DNS Records'},
-            {'id': 4, 'name': 'Verify Tokens'},
-            {'id': 5, 'name': 'Go Back'},
+            {'id': 4, 'name': 'Select Zone DNS Record'},
+            {'id': 5, 'name': 'Show DNS Record Details'},
+            {'id': 6, 'name': 'Create DNS Record'},
+            {'id': 7, 'name': 'Verify Tokens'},
+            {'id': 8, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
         match option:
@@ -163,11 +166,19 @@ class Menu():
                 self.obj_z.print_zone()
                 self.dns_zone()
             case '3':
-                # self.obj_z.print_dns_records()
-                self.obj_z.select_dns_record_of_type('A')
+                self.obj_z.print_dns_records()
                 self.dns_zone()
             case '4':
-                self.obj_z.verify_token()
+                self.obj_z.get_dns_record_of_type('')
                 self.dns_zone()
             case '5':
+                self.obj_z.print_dns_record()
+                self.dns_zone()
+            case '6':
+                self.obj_z.create_dns_record()
+                self.dns_zone()
+            case '7':
+                self.obj_z.verify_token()
+                self.dns_zone()
+            case '8':
                 self.main_menu()
