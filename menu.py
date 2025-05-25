@@ -12,8 +12,8 @@ class Menu():
         self.cloudflare_api = cloudflare_api
         self.obj_fw = Firewall(self.vultr_api)
         self.obj_ss = Snapshot(self.vultr_api)
-        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss)
         self.obj_z = Zone(self.cloudflare_api)
+        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_z)
 
     def main_menu(self):
         options = [
@@ -58,7 +58,9 @@ class Menu():
             {'id': 2, 'name': 'Show Instance'},
             {'id': 3, 'name': 'Create Instance'},
             {'id': 4, 'name': 'Delete Instance'},
-            {'id': 5, 'name': 'Go Back'},
+            {'id': 5, 'name': 'Create IP4 DNS Name from Hostname'},
+            {'id': 6, 'name': 'Create IP6 DNS Name from Hostname'},
+            {'id': 7, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
         match option:
@@ -69,12 +71,18 @@ class Menu():
                 self.obj_i.print_instance()
                 self.instance()
             case '3':
-                self.obj_i.create_instance()
+                self.obj_i.create_instance_prompt()
                 self.instance()
             case '4':
                 self.obj_i.delete_instance()
                 self.instance()
             case '5':
+                self.obj_i.dns_from_hostname_ip4()
+                self.instance()
+            case '6':
+                self.obj_i.dns_from_hostname_ip6()
+                self.instance()
+            case '7':
                 self.main_menu()
 
     def firewall(self):
@@ -97,8 +105,7 @@ class Menu():
                 self.obj_fw.print_firewall()
                 self.firewall()
             case '3':
-                fw_name = input("New Firewall Name?: ")
-                self.obj_fw.create_firewall(fw_name)
+                self.obj_fw.create_firewall_prompt()
                 self.firewall()
             case '4':
                 self.obj_fw.delete_firewall()

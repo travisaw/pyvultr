@@ -40,9 +40,13 @@ class Firewall:
             ]
             print(tabulate(result))
 
-    def create_firewall(self, description):
+    def create_firewall_prompt(self):
+        fw_name = input("New Firewall Name?: ")
+        body = {'description': fw_name}
+        self.create_firewall(body)
+
+    def create_firewall(self, body):
         url = 'firewalls'
-        body = {'description': description}
         data = self.api.api_post(url, body)
         if valid_response(data):
             print(f" Created firewall '{data['firewall_group']['description']}'")

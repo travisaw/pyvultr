@@ -8,10 +8,11 @@ class Instance:
     instance_tags = []
     instance_ip4 = ''
 
-    def __init__(self, api, fw_obj, ss_obj):
+    def __init__(self, api, fw_obj, ss_obj, cf_obj):
         self.api = api
         self.fw_obj = fw_obj
         self.ss_obj = ss_obj
+        self.cf_obj = cf_obj
         colorama_init(autoreset=True)
 
     def get_instances(self):
@@ -66,26 +67,31 @@ class Instance:
                 ['Pending Charges', data['instance']['pending_charges']],
             ]))
 
-    def create_instance(self):
+    def create_instance_prompt(self):
         label = input('Hostname/Label?:')
-        label2 = label + '2'
+        tags = ['pyvultr']
         self.fw_obj.get_firewalls()
         self.ss_obj.get_snapshots()
-        url = 'instances'
         body = {
             "region": "atl",
             "plan": "vc2-1c-1gb",
             "label": label,
             "hostname": label,
-            "tags": [label, label2],
+            "tags": tags,
             "firewall_group_id": self.fw_obj.firewall_id,
             "snapshot_id": self.ss_obj.snapshot_id,
             "enable_private_network": "false",
             "enable_ipv6": "false",
         }
+        self.create_instance(body)
+
+    def create_instance(self, body):
+        url = 'instances'
         data = self.api.api_post(url, body)
         if valid_response(data):
-            print(data)
+            print('Instance created and selected')
+            self.instance_id = data['instance']['id']
+            self.get_instance()
 
     def delete_instance(self):
         if 'prod' in self.instance_tags:
@@ -96,37 +102,43 @@ class Instance:
         if valid_response(data):
             print(f" {data['status']}: {data['info']}")
 
+    def dns_from_hostname_ip4(self):
+        pass
+
+    def dns_from_hostname_ip6(self):
+        pass
+
     def __instance_status_color(self, status):
         match status:
             case 'active':
-                return f'{Fore.GREEN}{status}{Style.RESET_ALL}' 
+                return f'{Fore.GREEN}{status}{Style.RESET_ALL}'
             case 'pending':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}' 
+                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
             case 'suspended':
-                return f'{Fore.RED}{status}{Style.RESET_ALL}' 
+                return f'{Fore.RED}{status}{Style.RESET_ALL}'
             case 'resizing':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}' 
+                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
             case _:
                 return status
 
     def __instance_power_status_color(self, status):
         match status:
             case 'running':
-                return f'{Fore.GREEN}{status}{Style.RESET_ALL}' 
+                return f'{Fore.GREEN}{status}{Style.RESET_ALL}'
             case 'stopped':
-                return f'{Fore.RED}{status}{Style.RESET_ALL}' 
+                return f'{Fore.RED}{status}{Style.RESET_ALL}'
             case _:
                 return status
-            
+
     def __instance_server_status_color(self, status):
         match status:
             case 'none':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}' 
+                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
             case 'locked':
-                return f'{Fore.RED}{status}{Style.RESET_ALL}' 
+                return f'{Fore.RED}{status}{Style.RESET_ALL}'
             case 'installingbooting':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}' 
+                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
             case 'ok':
-                return f'{Fore.GREEN}{status}{Style.RESET_ALL}' 
+                return f'{Fore.GREEN}{status}{Style.RESET_ALL}'
             case _:
                 return status
