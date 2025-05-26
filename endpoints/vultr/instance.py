@@ -6,7 +6,9 @@ from colorama import init as colorama_init
 class Instance:
     instance_id = str('')
     instance_tags = []
+    instance_hostname = ''
     instance_ip4 = ''
+    instance_ip6 = ''
 
     def __init__(self, api, fw_obj, ss_obj, cf_obj, p_obj, r_obj):
         self.api = api
@@ -30,7 +32,9 @@ class Instance:
         data = self.api.api_get(url)
         if valid_response(data):
             self.instance_tags = data['instance']['tags']
+            self.instance_hostname = data['instance']['hostname']
             self.instance_ip4 = data['instance']['main_ip']
+            self.instance_ip6 = data['instance']['v6_main_ip']
 
     def print_instance(self):
         url = f'instances/{self.instance_id}'
@@ -106,7 +110,17 @@ class Instance:
             print(f" {data['status']}: {data['info']}")
 
     def dns_from_hostname_ip4(self):
-        pass
+        self.cf_obj.get_zones() # Select DNS zone
+        if self.instance_ip4 == '0.0.0.0' or self.instance_ip4 == '':
+            return
+        body = {
+            "comment": "Added by pyvultr",
+            "content": self.instance_ip4,
+            "name": self.instance_hostname,
+            "proxied": True,
+            "ttl": 3600,
+            "type": "A"
+        }
 
     def dns_from_hostname_ip6(self):
         pass

@@ -100,5 +100,33 @@ class Zone:
         ]
         print(tabulate(result))
 
-    def create_dns_record(self):
-        pass
+    def create_dns_record_prompt(self):
+        name = input('DNS Name:')
+        content = input('IP Address:')
+        body = {
+            "comment": "Added by pyvultr",
+            "content": content,
+            "name": name,
+            "proxied": True,
+            "ttl": 3600,
+            "type": "A"
+        }
+        self.create_dns_record(body)
+
+    def create_dns_record(self, body):
+        url = f'zones/{self.zone_id}/dns_records'
+        data = self.api.api_post(url, body)
+        print(data)
+        if valid_response(data):
+            print('DNS entry created and selected')
+            # self.dns_record_id = data['instance']['id']
+            # self.get_instance()
+
+    def delete_instance(self):
+        # if 'prod' in self.instance_tags:
+        #     print(f"CANNOT DELETE PRODUCTION INSTANCE")
+        #     return
+        url = f'zones/{self.zone_id}/dns_records/{self.dns_record_id}'
+        data = self.api.api_delete(url)
+        if valid_response(data):
+            print(f" {data['status']}: {data['info']}")
