@@ -1,36 +1,11 @@
 import requests
+from .api import Api
 
-class Cloudflare:
+class Cloudflare(Api):
     def __init__(self, email, token):
         self.email = email
         self.token = token
         self.base_url = 'https://api.cloudflare.com/client/v4/'
-
-    def api_get(self, url):
-        call_url = self.base_url + url
-        headers = self.get_headers()
-        # print(headers)
-        # print(call_url)
-        response = requests.get(call_url, headers=headers)
-        return self.process_response(response)
-
-    def api_post(self, url, data):
-        call_url = self.base_url + url
-        headers = self.get_headers()
-        response = requests.post(call_url, json=data, headers=headers)
-        return self.process_response(response)
-
-    def api_delete(self, url):
-        call_url = self.base_url + url
-        headers = self.get_headers()
-        response = requests.delete(call_url, headers=headers)
-        return self.process_response(response)
-
-    def get_headers(self):
-        return {
-            'Authorization': f'Bearer {self.token}',
-            'Content-Type': 'application/json'
-        }
 
     def process_response(self, response):
         try:
