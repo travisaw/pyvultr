@@ -2,17 +2,19 @@ from util import utc_to_local, print_input_menu, valid_response_cloudflare
 from tabulate import tabulate
 
 class Zone:
-    zone_id = str('')
-    zone_detail = {}
-    dns_records = {}
-    dns_records_header = ['Name', ' Type', 'Content', 'Proxied']
-    dns_record_id = str('')
-    dns_record = {}
+    """Contains methods for interacting with the Cloudflare DNS Zones API."""
+    zone_id = str('')   # ID of select DNS zone
+    zone_detail = {}    # Dictionary containing details of DNS Zone
+    dns_records = {}    # Dictionary containing all DNS records in selected zone
+    dns_records_header = ['Name', ' Type', 'Content', 'Proxied'] # Header used when printing list of DNS records in zone
+    dns_record_id = str('') # ID of selected DNS record
+    dns_record = {}     # Dictionary containing details of selected DNS record
 
     def __init__(self, api):
         self.api = api
 
     def verify_token(self):
+        """Verify API token (technically doesn't below in this class)."""
         url = 'user/tokens/verify'
         data = self.api.api_get(url)
         result = [
@@ -25,6 +27,7 @@ class Zone:
         print(tabulate(result))
 
     def get_zones(self):
+        """Get all available zones (domains) available to token. User can select zone to use used for other operations."""
         url = 'zones'
         data = self.api.api_get(url)
         if valid_response_cloudflare(data):
@@ -34,12 +37,14 @@ class Zone:
             self.get_dns_records()
 
     def get_zone(self):
+        """Load details of selected zone into local variables."""
         url = f'zones/{self.zone_id}'
         data = self.api.api_get(url)
         if valid_response_cloudflare(data):
             self.zone_detail = data['result']
 
     def print_zone(self):
+        """Print details of selected zone."""
         if 'name' in self.zone_detail:
             result = [
                 ['Name: ', self.zone_detail['name']],
@@ -56,12 +61,13 @@ class Zone:
             print("NO ZONE SELECTED!")
 
     def get_dns_records(self):
+        """Load DNS records of selected zone into local variable."""
         url = f'zones/{self.zone_id}/dns_records'
         data = self.api.api_get(url)
         self.dns_records = data['result']
 
     def print_dns_records(self):
-        # print(self.dns_records)
+        """Print details list of DNS entries for zone."""
         result = []
         for i in self.dns_records:
             row = [
@@ -74,6 +80,7 @@ class Zone:
         print(tabulate(result, self.dns_records_header))
 
     def get_dns_record_of_type(self, type):
+        """Given a list of DNS record types print list of available records for user to select. If no type is given all types will be displayed."""
         result = []
         for i in self.dns_records:
             if i['type'] in type or type == '':
@@ -83,6 +90,7 @@ class Zone:
         self.dns_record_id = dns_list[int(option) - 1][0]
 
     def print_dns_record(self):
+        """Print details of selected DNS record."""
         if self.dns_record_id:
             match = next((d for d in self.dns_records if d.get('id') == self.dns_record_id), None)
             result = [
@@ -104,6 +112,7 @@ class Zone:
             print('No DNS Record Selected')
 
     def create_dns_record_prompt(self):
+        """Prompt user for details of DNS record. Pass details to method which creates the DNS record."""
         name = input('DNS Name:')
         content = input('IP Address:')
         body = {
@@ -117,14 +126,15 @@ class Zone:
         self.create_dns_record(body)
 
     def create_dns_record(self, body):
+        """Calls Cloudfare API to create DNS record with details provided in body."""
         url = f'zones/{self.zone_id}/dns_records'
         data = self.api.api_post(url, body)
         if valid_response_cloudflare(data):
             self.get_zone()
-            # print('DNS entry created and selected')
             print('DNS entry created. Record will need to be selected.')
 
     def delete_dns_record(self):
+        """Calls Cloudfare API to delete DNS record."""
         # if 'prod' in self.instance_tags:
         #     print(f"CANNOT DELETE PRODUCTION INSTANCE")
         #     return

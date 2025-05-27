@@ -73,6 +73,7 @@ def valid_option(option, options, base_value):
     return True
 
 def valid_response_vultr(output):
+    """Based on the response body from the Vultr API this method will determine if an error was returned. If so it will print the error."""
     if output.get('error'):
         print(f' {output['error_detail']['status']}: {output['error_detail']['error']}')
         return False
@@ -80,6 +81,7 @@ def valid_response_vultr(output):
         return True
 
 def valid_response_cloudflare(output):
+    """Based on the response body from the Cloudflare API this method will determine if an error was returned. If so it will print the error."""
     if output.get('error'):
         print(f'Error: {output['error']} - Success: {output['error_detail']['success']}')
         for e in output['error_detail']['errors']:
@@ -89,12 +91,13 @@ def valid_response_cloudflare(output):
         return True
 
 def ip6_network_prefix(ip6_address):
+    """Given an IP v6 address this method will return the network prefix of the address."""
     ipv6_interface = ipaddress.IPv6Interface(ip6_address)
     return ipv6_interface.network
 
 def format_bytes(size_in_bytes):
-    # Define the units
-    units = ["bytes", "KB", "MB", "GB", "TB", "PB"]
+    """Given an integer value represending number of bytes this will return the number formatted with an indication of MB, GB, etc."""
+    units = ["bytes", "KB", "MB", "GB", "TB", "PB"]  # Define the units
     power = 1024
     n = 0
 

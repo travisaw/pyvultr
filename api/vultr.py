@@ -7,6 +7,7 @@ class Vultr(Api):
         self.base_url = 'https://api.vultr.com/v2/'
 
     def process_response(self, response):
+        """Processes API response which is specific to the Vulrt API."""
         try:
             output = response.json()
             # print(output)

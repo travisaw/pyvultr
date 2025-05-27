@@ -8,6 +8,7 @@ class Cloudflare(Api):
         self.base_url = 'https://api.cloudflare.com/client/v4/'
 
     def process_response(self, response):
+        """Processes API response which is specific to the Cloudflare API."""
         try:
             output = response.json()
             # print(output)

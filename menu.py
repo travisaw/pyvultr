@@ -9,17 +9,19 @@ from endpoints.cloudflare.zone import Zone
 from util import print_input_menu
 
 class Menu():
+    """Contains methods to print each of the option menus. Also instantiates all the objects needed to run this tool."""
     def __init__(self, vultr_api, cloudflare_api):
-        self.vultr_api = vultr_api
-        self.cloudflare_api = cloudflare_api
-        self.obj_fw = Firewall(self.vultr_api)
-        self.obj_p = Plan(self.vultr_api)
-        self.obj_r = Region(self.vultr_api)
-        self.obj_ss = Snapshot(self.vultr_api)
-        self.obj_cf = Zone(self.cloudflare_api)
-        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r)
+        self.vultr_api = vultr_api              # Vultr API Object
+        self.cloudflare_api = cloudflare_api    # Cloudflare API Object
+        self.obj_fw = Firewall(self.vultr_api)  # Firewall Object
+        self.obj_p = Plan(self.vultr_api)       # Vultr Compute Plan Object
+        self.obj_r = Region(self.vultr_api)     # Vultr Region Object
+        self.obj_ss = Snapshot(self.vultr_api)  # Vultr Snapshot Object
+        self.obj_cf = Zone(self.cloudflare_api) # Cloudflare Zone Object
+        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r) # Vultr Compute Instance Object
 
     def main_menu(self):
+        """Main Menu. Entry Point for Application."""
         options = [
             {'id': 1, 'name': 'Account'},
             {'id': 2, 'name': 'Instances'},
@@ -44,6 +46,7 @@ class Menu():
                 exit()
 
     def account(self):
+        """Vultr Account Menu."""
         options = [
             {'id': 1, 'name': 'Show Account Details'},
             {'id': 2, 'name': 'Go Back'},
@@ -57,6 +60,7 @@ class Menu():
                 self.main_menu()
 
     def instance(self):
+        """Vultr Compute Instance Menu."""
         options = [
             {'id': 1, 'name': 'Show Instances'},
             {'id': 2, 'name': 'Show Instance'},
@@ -90,6 +94,7 @@ class Menu():
                 self.main_menu()
 
     def firewall(self):
+        """Vultr Firewall Menu."""
         options = [
             {'id': 1, 'name': 'Show Firewalls'},
             {'id': 2, 'name': 'Show Selected Firewall'},
@@ -127,6 +132,7 @@ class Menu():
                 self.main_menu()
 
     def snapshot(self):
+        """Vultr Snapshot Menu."""
         options = [
             {'id': 1, 'name': 'Show Snapshots'},
             {'id': 2, 'name': 'Show Selected Snapshot'},
@@ -158,6 +164,7 @@ class Menu():
                 self.main_menu()
 
     def dns_zone(self):
+        """Cloudflare DNS Zone Menu."""
         options = [
             {'id': 1, 'name': 'Show Zones'},
             {'id': 2, 'name': 'Show Selected Zone'},
