@@ -1,4 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response
+from util import utc_to_local, print_input_menu, valid_response_cloudflare
 from tabulate import tabulate
 
 class Zone:
@@ -27,7 +27,7 @@ class Zone:
     def get_zones(self):
         url = 'zones'
         data = self.api.api_get(url)
-        if valid_response(data):
+        if valid_response_cloudflare(data):
             option, inst_list = print_input_menu(data['result'], 'What zone to select?: ', 'id', 'name', True)
             self.zone_id = inst_list[int(option) - 1][0]
             self.get_zone()
@@ -36,7 +36,7 @@ class Zone:
     def get_zone(self):
         url = f'zones/{self.zone_id}'
         data = self.api.api_get(url)
-        if valid_response(data):
+        if valid_response_cloudflare(data):
             self.zone_detail = data['result']
 
     def print_zone(self):
@@ -76,29 +76,32 @@ class Zone:
     def get_dns_record_of_type(self, type):
         result = []
         for i in self.dns_records:
-            if i['type'] == type or type == '':
+            if i['type'] in type or type == '':
                 row = {'id': i['id'], 'name': i['name']}
                 result.append(row)
         option, dns_list = print_input_menu(result, 'What entry to select?: ', 'id', 'name', True)
         self.dns_record_id = dns_list[int(option) - 1][0]
 
     def print_dns_record(self):
-        match = next((d for d in self.dns_records if d.get('id') == self.dns_record_id), None)
-        result = [
-            ['Name: ', match['name']],
-            ['Type: ', match['type']],
-            ['Content: ', match['content']],
-            ['Proxiable: ', match['proxiable']],
-            ['Proxied: ', match['proxied']],
-            ['TTL: ', match['ttl']],
-            ['Settings: ', match['settings']],
-            ['Meta: ', match['meta']],
-            ['Comment: ', match['comment']],
-            ['Tags: ', match['tags']],
-            ['Created On: ', utc_to_local(match['created_on'])],
-            ['Modified On: ', utc_to_local(match['modified_on'])],
-        ]
-        print(tabulate(result))
+        if self.dns_record_id:
+            match = next((d for d in self.dns_records if d.get('id') == self.dns_record_id), None)
+            result = [
+                ['Name: ', match['name']],
+                ['Type: ', match['type']],
+                ['Content: ', match['content']],
+                ['Proxiable: ', match['proxiable']],
+                ['Proxied: ', match['proxied']],
+                ['TTL: ', match['ttl']],
+                ['Settings: ', match['settings']],
+                ['Meta: ', match['meta']],
+                ['Comment: ', match['comment']],
+                ['Tags: ', match['tags']],
+                ['Created On: ', utc_to_local(match['created_on'])],
+                ['Modified On: ', utc_to_local(match['modified_on'])],
+            ]
+            print(tabulate(result))
+        else:
+            print('No DNS Record Selected')
 
     def create_dns_record_prompt(self):
         name = input('DNS Name:')
@@ -108,7 +111,7 @@ class Zone:
             "content": content,
             "name": name,
             "proxied": True,
-            "ttl": 3600,
+            "ttl": 300,
             "type": "A"
         }
         self.create_dns_record(body)
@@ -116,17 +119,16 @@ class Zone:
     def create_dns_record(self, body):
         url = f'zones/{self.zone_id}/dns_records'
         data = self.api.api_post(url, body)
-        print(data)
-        if valid_response(data):
-            print('DNS entry created and selected')
-            # self.dns_record_id = data['instance']['id']
-            # self.get_instance()
+        if valid_response_cloudflare(data):
+            self.get_zone()
+            # print('DNS entry created and selected')
+            print('DNS entry created. Record will need to be selected.')
 
-    def delete_instance(self):
+    def delete_dns_record(self):
         # if 'prod' in self.instance_tags:
         #     print(f"CANNOT DELETE PRODUCTION INSTANCE")
         #     return
         url = f'zones/{self.zone_id}/dns_records/{self.dns_record_id}'
         data = self.api.api_delete(url)
-        if valid_response(data):
-            print(f" {data['status']}: {data['info']}")
+        if valid_response_cloudflare(data):
+            print(f"Success: {data['success']} - Record deleted.")

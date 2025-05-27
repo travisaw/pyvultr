@@ -165,31 +165,35 @@ class Menu():
             {'id': 4, 'name': 'Select Zone DNS Record'},
             {'id': 5, 'name': 'Show DNS Record Details'},
             {'id': 6, 'name': 'Create DNS Record'},
-            {'id': 7, 'name': 'Verify Tokens'},
-            {'id': 8, 'name': 'Go Back'},
+            {'id': 7, 'name': 'Delete DNS Record'},
+            {'id': 8, 'name': 'Verify Tokens'},
+            {'id': 9, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
         match option:
             case '1':
-                self.obj_z.get_zones()
+                self.obj_cf.get_zones()
                 self.dns_zone()
             case '2':
-                self.obj_z.print_zone()
+                self.obj_cf.print_zone()
                 self.dns_zone()
             case '3':
-                self.obj_z.print_dns_records()
+                self.obj_cf.print_dns_records()
                 self.dns_zone()
             case '4':
-                self.obj_z.get_dns_record_of_type('')
+                self.obj_cf.get_dns_record_of_type(['A', 'AAAA',])
                 self.dns_zone()
             case '5':
-                self.obj_z.print_dns_record()
+                self.obj_cf.print_dns_record()
                 self.dns_zone()
             case '6':
-                self.obj_z.create_dns_record()
+                self.obj_cf.create_dns_record_prompt()
                 self.dns_zone()
             case '7':
-                self.obj_z.verify_token()
+                self.obj_cf.delete_dns_record()
                 self.dns_zone()
             case '8':
+                self.obj_cf.verify_token()
+                self.dns_zone()
+            case '9':
                 self.main_menu()

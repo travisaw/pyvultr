@@ -72,9 +72,18 @@ def valid_option(option, options, base_value):
 
     return True
 
-def valid_response(output):
+def valid_response_vultr(output):
     if output.get('error'):
         print(f' {output['error_detail']['status']}: {output['error_detail']['error']}')
+        return False
+    else:
+        return True
+
+def valid_response_cloudflare(output):
+    if output.get('error'):
+        print(f'Error: {output['error']} - Success: {output['error_detail']['success']}')
+        for e in output['error_detail']['errors']:
+            print(f"  Code : {e['code']} - Message : {e['message']}")
         return False
     else:
         return True

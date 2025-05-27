@@ -1,4 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response, ip6_network_prefix
+from util import utc_to_local, print_input_menu, valid_response_vultr, ip6_network_prefix
 from tabulate import tabulate
 from requests import get
 
@@ -14,7 +14,7 @@ class Firewall:
     def get_firewalls(self):
         url = 'firewalls'
         data = self.api.api_get(url)
-        if valid_response(data):
+        if valid_response_vultr(data):
             option, fw_list = print_input_menu(data['firewall_groups'], 'What firewall to select?: ', 'id', 'description', True)
             self.firewall_id = fw_list[int(option) - 1][0]
             self.firewall_desc = fw_list[int(option) - 1][1]
@@ -23,13 +23,13 @@ class Firewall:
     def get_firewall(self):
         url = f'firewalls/{self.firewall_id}'
         data = self.api.api_get(url)
-        if valid_response(data):
+        if valid_response_vultr(data):
             self.firewall_desc = data['firewall_group']['description']
     
     def print_firewall(self):
         url = f'firewalls/{self.firewall_id}'
         data = self.api.api_get(url)
-        if valid_response(data):
+        if valid_response_vultr(data):
             result = [
                 ['Description: ', data['firewall_group']['description']],
                 ['Date Created: ', utc_to_local(data['firewall_group']['date_created'])],
@@ -48,19 +48,19 @@ class Firewall:
     def create_firewall(self, body):
         url = 'firewalls'
         data = self.api.api_post(url, body)
-        if valid_response(data):
+        if valid_response_vultr(data):
             print(f" Created firewall '{data['firewall_group']['description']}'")
 
     def delete_firewall(self):
         url = f'firewalls/{self.firewall_id}'
         data = self.api.api_delete(url)
-        if valid_response(data):
+        if valid_response_vultr(data):
             print(f" {data['status']}: {data['info']}")
 
     def get_firewall_rules(self):
         url = f'firewalls/{self.firewall_id}/rules'
         data = self.api.api_get(url)
-        if valid_response(data):
+        if valid_response_vultr(data):
             result = []
             for i in data['firewall_rules']:
                 row = [
@@ -98,7 +98,7 @@ class Firewall:
         for i in self.firewall_rules:
             url = f'firewalls/{self.firewall_id}/rules/{i[0]}'
             data = self.api.api_delete(url)
-            if valid_response(data):
+            if valid_response_vultr(data):
                 print(f" {data['status']}: {data['info']}")
 
     def add_ip_to_firewall_rules(self):
@@ -127,7 +127,7 @@ class Firewall:
                     "notes": "Example Firewall Rule"
                 }
             data = self.api.api_post(url, body)
-            if valid_response(data):
+            if valid_response_vultr(data):
                 print('Added Firewall Rule')
                 detail_row = [
                     data['firewall_rule']['type'],

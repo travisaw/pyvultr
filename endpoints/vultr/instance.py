@@ -1,4 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response
+from util import utc_to_local, print_input_menu, valid_response_vultr
 from tabulate import tabulate
 from colorama import Fore, Style
 from colorama import init as colorama_init
@@ -22,7 +22,7 @@ class Instance:
     def get_instances(self):
         url = 'instances'
         data = self.api.api_get(url)
-        if valid_response(data):
+        if valid_response_vultr(data):
             option, inst_list = print_input_menu(data['instances'], 'What instance to select?: ', 'id', 'label', True)
             self.instance_id = inst_list[int(option) - 1][0]
             self.get_instance()
@@ -30,7 +30,7 @@ class Instance:
     def get_instance(self):
         url = f'instances/{self.instance_id}'
         data = self.api.api_get(url)
-        if valid_response(data):
+        if valid_response_vultr(data):
             self.instance_tags = data['instance']['tags']
             self.instance_hostname = data['instance']['hostname']
             self.instance_ip4 = data['instance']['main_ip']
@@ -39,7 +39,7 @@ class Instance:
     def print_instance(self):
         url = f'instances/{self.instance_id}'
         data = self.api.api_get(url)
-        if valid_response(data):
+        if valid_response_vultr(data):
             self.fw_obj.firewall_id = data['instance']['firewall_group_id']
             self.fw_obj.get_firewall()
             print(tabulate([
@@ -95,7 +95,7 @@ class Instance:
     def create_instance(self, body):
         url = 'instances'
         data = self.api.api_post(url, body)
-        if valid_response(data):
+        if valid_response_vultr(data):
             print('Instance created and selected')
             self.instance_id = data['instance']['id']
             self.get_instance()
@@ -106,7 +106,7 @@ class Instance:
             return
         url = f'instances/{self.instance_id}'
         data = self.api.api_delete(url)
-        if valid_response(data):
+        if valid_response_vultr(data):
             print(f" {data['status']}: {data['info']}")
 
     def dns_from_hostname_ip4(self):
@@ -117,10 +117,11 @@ class Instance:
             "comment": "Added by pyvultr",
             "content": self.instance_ip4,
             "name": self.instance_hostname,
-            "proxied": True,
-            "ttl": 3600,
+            "proxied": False,
+            "ttl": 300,
             "type": "A"
         }
+        self.cf_obj.create_dns_record(body)
 
     def dns_from_hostname_ip6(self):
         pass
