@@ -1,6 +1,7 @@
 from util import print_input_menu, valid_response_vultr
 
 class Region:
+    """Contains methods for interacting with the Vultr Regions API."""
     region_id = str('')
     region_desc = str('')
 
@@ -8,6 +9,7 @@ class Region:
         self.api = api
 
     def get_regions(self):
+        """List all regions and prompt user to select one."""
         url = 'regions'
         data = self.api.api_get(url)
         if valid_response_vultr(data):
@@ -16,6 +18,7 @@ class Region:
             self.region_desc = r_list[int(option) - 1][1]
 
     def get_preferred_region(self):
+        """List 'preferred' regions and prompt user to select one. List hardcoded."""
         options = [
             {'id': 'atl', 'name': 'Atlanta'},
             {'id': 'ewr', 'name': 'New York'},

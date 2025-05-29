@@ -2,6 +2,7 @@ from util import utc_to_local
 from tabulate import tabulate
 
 def get_account_info(api):
+    """Print account info."""
     url = 'account'
     data = api.api_get(url)
     result = [

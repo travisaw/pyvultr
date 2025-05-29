@@ -4,6 +4,7 @@ from colorama import Fore, Style
 from colorama import init as colorama_init
 
 class Snapshot:
+    """Contains methods for interacting with the Vultr Snapshot API."""
     snapshot_id = str('')
     snapshot_desc = str('')
 
@@ -11,6 +12,7 @@ class Snapshot:
         self.api = api
 
     def get_snapshots(self):
+        """List all snapshots and prompt user to select one."""
         url = 'snapshots'
         data = self.api.api_get(url)
         if valid_response_vultr(data):
@@ -19,6 +21,7 @@ class Snapshot:
             self.snapshot_desc = ss_list[int(option) - 1][1]
 
     def get_snapshot(self):
+        """Print details of selected snapshot."""
         url = f'snapshots/{self.snapshot_id}'
         data = self.api.api_get(url)
         if valid_response_vultr(data):
@@ -32,6 +35,7 @@ class Snapshot:
             ]))
 
     def create_snapshot(self, ss_name, instance_id):
+        """Print create snapshot given a name/description and instance ID."""
         url = 'snapshots'
         body = {
             "instance_id": instance_id,
@@ -42,12 +46,14 @@ class Snapshot:
             print(f" Created snapshot '{data['snapshot']['description']}'")
 
     def delete_snapshot(self):
+        """Delete the currently selected snapshot."""
         url = f'snapshots/{self.snapshot_id}'
         data = self.api.api_delete(url)
         if valid_response_vultr(data):
             print(f" {data['status']}: {data['info']}")
     
     def update_snapshot(self, ss_name):
+        """Update the description of the currently selected snapshot."""
         url = f'snapshots/{self.snapshot_id}'
         body = {
             "description": ss_name,
@@ -57,6 +63,7 @@ class Snapshot:
             print(f" {data['status']}: {data['info']}")
 
     def __snapshot_status_color(self, status):
+        """Private function that colors text if is of status pending, complete, deleted."""
         match status:
             case 'pending':
                 return f'{Fore.YELLOW}{status}{Style.RESET_ALL}' 
