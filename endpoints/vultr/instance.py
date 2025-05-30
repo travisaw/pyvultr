@@ -101,8 +101,7 @@ class Instance:
             self.get_instance()
 
     def delete_instance(self):
-        if 'prod' in self.instance_tags:
-            print(f"CANNOT DELETE PRODUCTION INSTANCE")
+        if self.__is_instance_prod():
             return
         url = f'instances/{self.instance_id}'
         data = self.api.api_delete(url)
@@ -112,6 +111,7 @@ class Instance:
     def dns_from_hostname_ip4(self):
         self.cf_obj.get_zones() # Select DNS zone
         if self.instance_ip4 == '0.0.0.0' or self.instance_ip4 == '':
+            print('No IP address assigned yet.')
             return
         body = {
             "comment": "Added by pyvultr",
@@ -125,6 +125,17 @@ class Instance:
 
     def dns_from_hostname_ip6(self):
         pass
+
+    def delete_dns(self, ip4):
+        if self.__is_instance_prod():
+            return
+        if ip4:
+            ip = self.instance_ip4
+        else:
+            ip = self.instance_ip6
+        self.cf_obj.get_zones()
+        if self.cf_obj.get_dns_record_by_name_content(self.instance_hostname, ip):
+            self.cf_obj.delete_dns_record()
 
     def __instance_status_color(self, status):
         match status:
@@ -160,3 +171,10 @@ class Instance:
                 return f'{Fore.GREEN}{status}{Style.RESET_ALL}'
             case _:
                 return status
+
+    def __is_instance_prod(self):
+        if 'prod' in self.instance_tags:
+            print(f"CANNOT DELETE RESOURCES TAGGED AS PRODUCTION")
+            return True
+        else:
+            return False

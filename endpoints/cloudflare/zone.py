@@ -91,6 +91,16 @@ class Zone:
         option, dns_list = print_input_menu(result, 'What entry to select?: ', 'id', ['name', 'type', 'content'], True)
         self.dns_record_id = dns_list[int(option) - 1][0]
 
+    def get_dns_record_by_name_content(self, name, content):
+        """Load DNS record ID given it's name and content."""
+        full_name = name + '.' + self.zone_detail['name']
+        for i in self.dns_records:
+            if i['name'] == full_name and i['content'] == content:
+                print('Found DNS Record.')
+                self.dns_record_id = i['id']
+                return True
+        return False
+
     def print_dns_record(self):
         """Print details of selected DNS record."""
         if self.dns_record_id:
