@@ -99,6 +99,7 @@ class Zone:
                 print('Found DNS Record.')
                 self.dns_record_id = i['id']
                 return True
+        print('No DNS Record Found.')
         return False
 
     def print_dns_record(self):
