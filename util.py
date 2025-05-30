@@ -2,6 +2,7 @@ from datetime import datetime, timezone as tz
 import pytz
 import tzlocal
 import ipaddress
+from tabulate import tabulate
 
 def utc_to_local(utc_string):
     """Format given UTC time from API into local (US) format"""
@@ -44,14 +45,19 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
 
     while True:
         out_list = []
+        print_list = []
         inst_count = 1
         for i in options:
-            if inst_count == 1 and none_option:
-                print('0. None (Return)')
-            out_row = [i[value_key], i[display_key]]
-            out_list.append(out_row)
-            print(str(inst_count) + '. '+ i[display_key])
+            if inst_count == 1 and none_option: # If an option of 'None' should be included, add it here.
+                print_list.append(['0', 'None (Return)'])
+            out_list.append([i[value_key], display_key[0]])
+            print_row = []
+            print_row.append(str(inst_count))
+            for j in display_key: # Add elements of display columns to row.
+                print_row.append(i[j])
+            print_list.append(print_row)
             inst_count += 1
+        print(tabulate(print_list)) # Print menu output 
         try:
             option = input(prompt)
             if not valid_option(option, out_list, base_value):

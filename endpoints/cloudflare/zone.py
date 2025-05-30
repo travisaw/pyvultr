@@ -31,7 +31,7 @@ class Zone:
         url = 'zones'
         data = self.api.api_get(url)
         if valid_response_cloudflare(data):
-            option, inst_list = print_input_menu(data['result'], 'What zone to select?: ', 'id', 'name', True)
+            option, inst_list = print_input_menu(data['result'], 'What zone to select?: ', 'id', ['name'], True)
             self.zone_id = inst_list[int(option) - 1][0]
             self.get_zone()
             self.get_dns_records()
@@ -80,13 +80,15 @@ class Zone:
         print(tabulate(result, self.dns_records_header))
 
     def get_dns_record_of_type(self, type):
-        """Given a list of DNS record types print list of available records for user to select. If no type is given all types will be displayed."""
+        """
+        Given a list of DNS record types print list of available records for user to select. 
+        If no type is given all types will be displayed.
+        """
         result = []
         for i in self.dns_records:
             if i['type'] in type or type == '':
-                row = {'id': i['id'], 'name': i['name']}
-                result.append(row)
-        option, dns_list = print_input_menu(result, 'What entry to select?: ', 'id', 'name', True)
+                result.append({'id': i['id'], 'name': i['name'], 'type': i['type'], 'content': i['content']})
+        option, dns_list = print_input_menu(result, 'What entry to select?: ', 'id', ['name', 'type', 'content'], True)
         self.dns_record_id = dns_list[int(option) - 1][0]
 
     def print_dns_record(self):

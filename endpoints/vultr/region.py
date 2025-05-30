@@ -13,7 +13,7 @@ class Region:
         url = 'regions'
         data = self.api.api_get(url)
         if valid_response_vultr(data):
-            option, r_list = print_input_menu(data['regions'], 'What region to select?: ', 'id', 'description', True)
+            option, r_list = print_input_menu(data['regions'], 'What region to select?: ', 'id', ['description'], True)
             self.region_id = r_list[int(option) - 1][0]
             self.region_desc = r_list[int(option) - 1][1]
 
@@ -28,6 +28,6 @@ class Region:
             {'id': 'lhr', 'name': 'London'},
             {'id': 'ams', 'name': 'Amsterdam'},
         ]
-        option, r_list = print_input_menu(options, 'What region to select?: ', 'id', 'name', False)
+        option, r_list = print_input_menu(options, 'What region to select?: ', 'id', ['name'], False)
         self.region_id = r_list[int(option) - 1][0]
         self.region_desc = r_list[int(option) - 1][1]

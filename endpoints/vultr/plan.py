@@ -11,7 +11,7 @@ class Plan:
         url = 'plans'
         data = self.api.api_get(url)
         if valid_response_vultr(data):
-            option, p_list = print_input_menu(data['plans'], 'What plan to select?: ', 'id', 'description', True)
+            option, p_list = print_input_menu(data['plans'], 'What plan to select?: ', 'id', ['description'], True)
             self.plan_id = p_list[int(option) - 1][0]
             self.plan_desc = p_list[int(option) - 1][1]
 

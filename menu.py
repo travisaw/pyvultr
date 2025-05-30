@@ -30,7 +30,7 @@ class Menu():
             {'id': 5, 'name': 'DNS Zones'},
             {'id': 6, 'name': 'Exit'},
         ]
-        option, inst_list = print_input_menu(options, 'What area?: ', 'id', 'name', False)
+        option, inst_list = print_input_menu(options, 'What area?: ', 'id', ['name'], False)
         match option:
             case '1':
                 self.account()
@@ -51,7 +51,7 @@ class Menu():
             {'id': 1, 'name': 'Show Account Details'},
             {'id': 2, 'name': 'Go Back'},
         ]
-        option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
             case '1':
                 get_account_info(self.vultr_api)
@@ -70,7 +70,7 @@ class Menu():
             {'id': 6, 'name': 'Create IP6 DNS Name from Hostname'},
             {'id': 7, 'name': 'Go Back'},
         ]
-        option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
             case '1':
                 self.obj_i.get_instances()
@@ -105,7 +105,7 @@ class Menu():
             {'id': 7, 'name': 'Add Current IP to Firewall Rules'},
             {'id': 8, 'name': 'Go Back'},
         ]
-        option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
             case '1':
                 self.obj_fw.get_firewalls()
@@ -141,7 +141,7 @@ class Menu():
             {'id': 5, 'name': 'Update Snapshot'},
             {'id': 6, 'name': 'Go Back'},
         ]
-        option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
             case '1':
                 self.obj_ss.get_snapshots()
@@ -176,7 +176,7 @@ class Menu():
             {'id': 8, 'name': 'Verify Tokens'},
             {'id': 9, 'name': 'Go Back'},
         ]
-        option, inst_list = print_input_menu(options, 'What action?: ', 'id', 'name', False)
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
             case '1':
                 self.obj_cf.get_zones()

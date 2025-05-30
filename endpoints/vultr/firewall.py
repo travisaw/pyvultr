@@ -15,7 +15,7 @@ class Firewall:
         url = 'firewalls'
         data = self.api.api_get(url)
         if valid_response_vultr(data):
-            option, fw_list = print_input_menu(data['firewall_groups'], 'What firewall to select?: ', 'id', 'description', True)
+            option, fw_list = print_input_menu(data['firewall_groups'], 'What firewall to select?: ', 'id', ['description'], True)
             self.firewall_id = fw_list[int(option) - 1][0]
             self.firewall_desc = fw_list[int(option) - 1][1]
             self.get_firewall_rules()

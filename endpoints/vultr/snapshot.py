@@ -16,7 +16,7 @@ class Snapshot:
         url = 'snapshots'
         data = self.api.api_get(url)
         if valid_response_vultr(data):
-            option, ss_list = print_input_menu(data['snapshots'], 'What snapshot to select?: ', 'id', 'description', True)
+            option, ss_list = print_input_menu(data['snapshots'], 'What snapshot to select?: ', 'id', ['description', 'status'], True)
             self.snapshot_id = ss_list[int(option) - 1][0]
             self.snapshot_desc = ss_list[int(option) - 1][1]
 
