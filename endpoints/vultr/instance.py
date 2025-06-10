@@ -24,7 +24,7 @@ class Instance:
         data = self.api.api_get(url)
         if valid_response_vultr(data):
             option, inst_list = print_input_menu(data['instances'], 'What instance to select?: ', 'id', ['label'], True)
-            self.instance_id = inst_list[int(option) - 1][0]
+            self.instance_id = inst_list[int(option)][0]
             self.get_instance()
 
     def get_instance(self):

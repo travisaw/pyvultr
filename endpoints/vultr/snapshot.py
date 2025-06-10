@@ -17,22 +17,25 @@ class Snapshot:
         data = self.api.api_get(url)
         if valid_response_vultr(data):
             option, ss_list = print_input_menu(data['snapshots'], 'What snapshot to select?: ', 'id', ['description', 'status'], True)
-            self.snapshot_id = ss_list[int(option) - 1][0]
-            self.snapshot_desc = ss_list[int(option) - 1][1]
+            self.snapshot_id = ss_list[int(option)][0]
+            self.snapshot_desc = ss_list[int(option)][1]
 
     def get_snapshot(self):
         """Print details of selected snapshot."""
-        url = f'snapshots/{self.snapshot_id}'
-        data = self.api.api_get(url)
-        if valid_response_vultr(data):
-            print(tabulate([
-                # ['id', data['snapshot']['id']],
-                ['date_created', utc_to_local(data['snapshot']['date_created'])],
-                ['description', data['snapshot']['description']],
-                ['size', format_bytes(data['snapshot']['size'])],
-                ['compressed_size', format_bytes(data['snapshot']['compressed_size'])],
-                ['status', self.__snapshot_status_color(data['snapshot']['status'])],
-            ]))
+        if self.snapshot_id != '':
+            url = f'snapshots/{self.snapshot_id}'
+            data = self.api.api_get(url)
+            if valid_response_vultr(data):
+                print(tabulate([
+                    # ['id', data['snapshot']['id']],
+                    ['date_created', utc_to_local(data['snapshot']['date_created'])],
+                    ['description', data['snapshot']['description']],
+                    ['size', format_bytes(data['snapshot']['size'])],
+                    ['compressed_size', format_bytes(data['snapshot']['compressed_size'])],
+                    ['status', self.__snapshot_status_color(data['snapshot']['status'])],
+                ]))
+        else:
+            print('No Snapshot Selected!')
 
     def create_snapshot(self, ss_name, instance_id):
         """Print create snapshot given a name/description and instance ID."""

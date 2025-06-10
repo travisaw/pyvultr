@@ -39,18 +39,20 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
     Given a list of options, the options will be printed and the user will be prompted to enter a selection. 
     Both the selection and list are returned.
     """
+    out_list = []
+    print_list = []
+    inst_count = 1
     base_value = 1
+
     if none_option:
         base_value = 0
+        out_list.append(['', 'None'])
 
     while True:
-        out_list = []
-        print_list = []
-        inst_count = 1
         for i in options:
             if inst_count == 1 and none_option: # If an option of 'None' should be included, add it here.
-                print_list.append(['0', 'None (Return)'])
-            out_list.append([i[value_key], display_key[0]])
+                print_list.append(['0', 'None (Clear Selection)'])
+            out_list.append([i[value_key], i[display_key[0]]])
             print_row = []
             print_row.append(str(inst_count))
             for j in display_key: # Add elements of display columns to row.

@@ -173,7 +173,7 @@ class Menu():
             {'id': 1, 'name': 'Show Zones'},
             {'id': 2, 'name': 'Show Selected Zone'},
             {'id': 3, 'name': 'Show Zone DNS Records'},
-            {'id': 4, 'name': 'Select Zone DNS Record'},
+            {'id': 4, 'name': 'Select Zone DNS Record (A and AAAA only'},
             {'id': 5, 'name': 'Show DNS Record Details'},
             {'id': 6, 'name': 'Create DNS Record'},
             {'id': 7, 'name': 'Delete DNS Record'},

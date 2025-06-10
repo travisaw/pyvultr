@@ -32,16 +32,19 @@ class Zone:
         data = self.api.api_get(url)
         if valid_response_cloudflare(data):
             option, inst_list = print_input_menu(data['result'], 'What zone to select?: ', 'id', ['name'], True)
-            self.zone_id = inst_list[int(option) - 1][0]
+            self.zone_id = inst_list[int(option)][0]
             self.get_zone()
             self.get_dns_records()
 
     def get_zone(self):
         """Load details of selected zone into local variables."""
-        url = f'zones/{self.zone_id}'
-        data = self.api.api_get(url)
-        if valid_response_cloudflare(data):
-            self.zone_detail = data['result']
+        if self.zone_id != '':
+            url = f'zones/{self.zone_id}'
+            data = self.api.api_get(url)
+            if valid_response_cloudflare(data):
+                self.zone_detail = data['result']
+        else:
+            self.zone_detail = {}
 
     def print_zone(self):
         """Print details of selected zone."""
@@ -58,38 +61,43 @@ class Zone:
             ]
             print(tabulate(result))
         else:
-            print("NO ZONE SELECTED!")
+            print("No DNS Zone Selected!")
 
     def get_dns_records(self):
         """Load DNS records of selected zone into local variable."""
-        url = f'zones/{self.zone_id}/dns_records'
-        data = self.api.api_get(url)
-        self.dns_records = data['result']
+        if self.zone_id != '':
+            url = f'zones/{self.zone_id}/dns_records'
+            data = self.api.api_get(url)
+            self.dns_records = data['result']
+        else:
+            self.dns_records = {}
 
     def print_dns_records(self):
         """Print details list of DNS entries for zone."""
-        result = []
-        for i in self.dns_records:
-            row = [
-                i['name'],
-                i['type'],
-                i['content'][:40],
-                i['proxied'],
-            ]
-            result.append(row)
-        print(tabulate(result, self.dns_records_header))
+        if self.__zone_selected():
+            result = []
+            for i in self.dns_records:
+                row = [
+                    i['name'],
+                    i['type'],
+                    i['content'][:40],
+                    i['proxied'],
+                ]
+                result.append(row)
+            print(tabulate(result, self.dns_records_header))
 
     def get_dns_record_of_type(self, type):
         """
         Given a list of DNS record types print list of available records for user to select. 
         If no type is given all types will be displayed.
         """
-        result = []
-        for i in self.dns_records:
-            if i['type'] in type or type == '':
-                result.append({'id': i['id'], 'name': i['name'], 'type': i['type'], 'content': i['content']})
-        option, dns_list = print_input_menu(result, 'What entry to select?: ', 'id', ['name', 'type', 'content'], True)
-        self.dns_record_id = dns_list[int(option) - 1][0]
+        if self.__zone_selected():
+            result = []
+            for i in self.dns_records:
+                if i['type'] in type or type == '':
+                    result.append({'id': i['id'], 'name': i['name'], 'type': i['type'], 'content': i['content']})
+            option, dns_list = print_input_menu(result, 'What entry to select?: ', 'id', ['name', 'type', 'content'], True)
+            self.dns_record_id = dns_list[int(option)][0]
 
     def get_dns_record_by_name_content(self, name, content):
         """Load DNS record ID given it's name and content."""
@@ -155,3 +163,10 @@ class Zone:
         data = self.api.api_delete(url)
         if valid_response_cloudflare(data):
             print(f"Success: {data['success']} - Record deleted.")
+
+    def __zone_selected(self):
+        if self.dns_records:
+            return True
+        else:
+            print('No DNS Zone Selected!')
+            return False
