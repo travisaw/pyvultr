@@ -37,41 +37,44 @@ class Instance:
             self.instance_ip6 = data['instance']['v6_main_ip']
 
     def print_instance(self):
-        url = f'instances/{self.instance_id}'
-        data = self.api.api_get(url)
-        if valid_response_vultr(data):
-            self.fw_obj.firewall_id = data['instance']['firewall_group_id']
-            self.fw_obj.get_firewall()
-            print(tabulate([
-                ['Label', data['instance']['label']],
-                ['Hostname', data['instance']['hostname']],
-                ['Tags', data['instance']['tags']],
-                ['Region', data['instance']['region']],
-                ['Date Created', utc_to_local(data['instance']['date_created'])],
-                ['Plan', data['instance']['plan']],
-                ['OS', data['instance']['os']],
-                ['OS ID', data['instance']['os_id']],
-                ['App Id', data['instance']['app_id']],
-                ['vCPU Count', data['instance']['vcpu_count']],
-                ['Ram', data['instance']['ram']],
-                ['Disk', data['instance']['disk']],
-                ['Allowed Bandwidth', data['instance']['allowed_bandwidth']],
-                # ['internal_ip', data['instance']['internal_ip']],
-                # ['netmask_v4', data['instance']['netmask_v4']],
-                ['v4 Main IP', data['instance']['main_ip']],
-                # ['gateway_v4', data['instance']['gateway_v4']],
-                # ['v6_network', data['instance']['v6_network']],
-                ['v6 Main IP', data['instance']['v6_main_ip']],
-                # ['v6_network_size', data['instance']['v6_network_size']],
-                ['Firewall Group', self.fw_obj.firewall_desc],
-                ['Status', self.__instance_status_color(data['instance']['status'])],
-                ['Power Status', self.__instance_power_status_color(data['instance']['power_status'])],
-                ['Server Status', self.__instance_server_status_color(data['instance']['server_status'])],
-                # ['image_id', data['instance']['image_id']],
-                ['Features', data['instance']['features']],
-                ['User Scheme', data['instance']['user_scheme']],
-                ['Pending Charges', data['instance']['pending_charges']],
-            ]))
+        if self.instance_id != '':
+            url = f'instances/{self.instance_id}'
+            data = self.api.api_get(url)
+            if valid_response_vultr(data):
+                self.fw_obj.firewall_id = data['instance']['firewall_group_id']
+                self.fw_obj.get_firewall()
+                print(tabulate([
+                    ['Label', data['instance']['label']],
+                    ['Hostname', data['instance']['hostname']],
+                    ['Tags', data['instance']['tags']],
+                    ['Region', data['instance']['region']],
+                    ['Date Created', utc_to_local(data['instance']['date_created'])],
+                    ['Plan', data['instance']['plan']],
+                    ['OS', data['instance']['os']],
+                    ['OS ID', data['instance']['os_id']],
+                    ['App Id', data['instance']['app_id']],
+                    ['vCPU Count', data['instance']['vcpu_count']],
+                    ['Ram', data['instance']['ram']],
+                    ['Disk', data['instance']['disk']],
+                    ['Allowed Bandwidth', data['instance']['allowed_bandwidth']],
+                    # ['internal_ip', data['instance']['internal_ip']],
+                    # ['netmask_v4', data['instance']['netmask_v4']],
+                    ['v4 Main IP', data['instance']['main_ip']],
+                    # ['gateway_v4', data['instance']['gateway_v4']],
+                    # ['v6_network', data['instance']['v6_network']],
+                    ['v6 Main IP', data['instance']['v6_main_ip']],
+                    # ['v6_network_size', data['instance']['v6_network_size']],
+                    ['Firewall Group', self.fw_obj.firewall_desc],
+                    ['Status', self.__instance_status_color(data['instance']['status'])],
+                    ['Power Status', self.__instance_power_status_color(data['instance']['power_status'])],
+                    ['Server Status', self.__instance_server_status_color(data['instance']['server_status'])],
+                    # ['image_id', data['instance']['image_id']],
+                    ['Features', data['instance']['features']],
+                    ['User Scheme', data['instance']['user_scheme']],
+                    ['Pending Charges', data['instance']['pending_charges']],
+                ]))
+        else:
+            print('No Instance Selected!')
 
     def create_instance_prompt(self):
         label = input('Hostname/Label?:')

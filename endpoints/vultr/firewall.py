@@ -25,20 +25,24 @@ class Firewall:
         data = self.api.api_get(url)
         if valid_response_vultr(data):
             self.firewall_desc = data['firewall_group']['description']
+
     
     def print_firewall(self):
-        url = f'firewalls/{self.firewall_id}'
-        data = self.api.api_get(url)
-        if valid_response_vultr(data):
-            result = [
-                ['Description: ', data['firewall_group']['description']],
-                ['Date Created: ', utc_to_local(data['firewall_group']['date_created'])],
-                ['Date Updated: ', utc_to_local(data['firewall_group']['date_modified'])],
-                ['Instance Count: ', data['firewall_group']['instance_count']],
-                ['Rule Count: ', data['firewall_group']['rule_count']],
-                ['Max Rule Count: ', data['firewall_group']['max_rule_count']]
-            ]
-            print(tabulate(result))
+        if self.firewall_id != '':
+            url = f'firewalls/{self.firewall_id}'
+            data = self.api.api_get(url)
+            if valid_response_vultr(data):
+                result = [
+                    ['Description: ', data['firewall_group']['description']],
+                    ['Date Created: ', utc_to_local(data['firewall_group']['date_created'])],
+                    ['Date Updated: ', utc_to_local(data['firewall_group']['date_modified'])],
+                    ['Instance Count: ', data['firewall_group']['instance_count']],
+                    ['Rule Count: ', data['firewall_group']['rule_count']],
+                    ['Max Rule Count: ', data['firewall_group']['max_rule_count']]
+                ]
+                print(tabulate(result))
+        else:
+            print('No Firewall Selected!')
 
     def create_firewall_prompt(self):
         fw_name = input("New Firewall Name?: ")
