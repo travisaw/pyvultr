@@ -5,7 +5,18 @@ import ipaddress
 from tabulate import tabulate
 
 def utc_to_local(utc_string):
-    """Format given UTC time from API into local (US) format"""
+    """
+    Converts a UTC datetime string to the local system's timezone and returns it as a formatted string.
+    Args:
+        utc_string (str): The UTC datetime string to convert.
+    Returns:
+        str: The local time as a formatted string in the form "%Y-%m-%d %H:%M:%S %Z".
+    Raises:
+        ValueError: If the input string does not match the detected datetime format.
+    Note:
+        This function relies on the `detect_datetime_format` function to determine the format of the input string,
+        and uses the system's local timezone for conversion.
+    """
     utc_format = detect_datetime_format(utc_string)
 
     # Parse the UTC string into a datetime object
@@ -25,7 +36,22 @@ def utc_to_local(utc_string):
     return local_dt_string
 
 def detect_datetime_format(date_str):
-    """Given a datetime string, this will determine the format used to decode. Supports formats that come from Vultr and Cloudflare APIs."""
+    """
+    Determines the datetime format string for decoding a given datetime string.
+
+    Supports detection of formats commonly returned by Vultr and Cloudflare APIs:
+    - ISO 8601 with 'Z' suffix for UTC (e.g., '2023-06-01T12:34:56.789Z')
+    - ISO 8601 with timezone offset (e.g., '2023-06-01T12:34:56+00:00')
+
+    Args:
+        date_str (str): The datetime string to analyze.
+
+    Returns:
+        str: The corresponding datetime format string for use with datetime.strptime.
+
+    Raises:
+        ValueError: If the datetime format is unknown or unsupported.
+    """
     if date_str.endswith('Z'):
         fmt = "%Y-%m-%dT%H:%M:%S.%fZ"
     elif '+' in date_str or '-' in date_str[19:]:
@@ -36,8 +62,19 @@ def detect_datetime_format(date_str):
 
 def print_input_menu(options, prompt, value_key, display_key, none_option = False):
     """
-    Given a list of options, the options will be printed and the user will be prompted to enter a selection. 
-    Both the selection and list are returned.
+    Displays a menu of selectable options to the user, prompts for a selection, and returns the user's choice along with the list of options.
+    Args:
+        options (list): A list of dictionaries representing the selectable options.
+        prompt (str): The prompt message to display to the user.
+        value_key (str): The key in each option dictionary whose value will be used as the option's identifier.
+        display_key (list): A list of keys whose values will be displayed for each option.
+        none_option (bool, optional): If True, includes a 'None' option allowing the user to clear their selection. Defaults to False.
+    Returns:
+        tuple: A tuple containing:
+            - option (str): The user's selected option.
+            - out_list (list): The list of options displayed, including any 'None' option if specified.
+    Raises:
+        KeyboardInterrupt: If the user interrupts input (e.g., with Ctrl+C), prints an exit message and terminates the program.
     """
     out_list = []
     print_list = []
@@ -73,8 +110,15 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
 
 def valid_option(option, options, base_value):
     """
-    Given the users' input and a list of input options and base (first value in list) value (0 or 1), 
-    determine if selected value is valid.
+    Checks if a user's selected option is valid based on a list of available options and a base value.
+    Parameters:
+        option (str or int): The user's input selection, expected to be convertible to an integer.
+        options (list): The list of valid options to select from.
+        base_value (int): The starting index for valid options (typically 0 or 1).
+    Returns:
+        bool: True if the selection is valid, False otherwise.
+    Side Effects:
+        Prints messages to stdout for invalid selections, out-of-range selections, or options marked as "coming soon".
     """
     try:
         i_option = int(option)
@@ -96,8 +140,14 @@ def valid_option(option, options, base_value):
 
 def valid_response_vultr(output):
     """
-    Based on the response body from the Vultr API this method will determine if an error was returned. 
-    If so it will print the error.
+    Checks the response from the Vultr API for errors and prints error details if present.
+
+    Args:
+        output (dict): The response body from the Vultr API.
+
+    Returns:
+        bool: False if an error is present in the response and prints the error details;
+              True otherwise.
     """
     if output.get('error'):
         print(f' {output['error_detail']['status']}: {output['error_detail']['error']}')
@@ -107,8 +157,16 @@ def valid_response_vultr(output):
 
 def valid_response_cloudflare(output):
     """
-    Based on the response body from the Cloudflare API this method will determine if an error was returned. 
-    If so it will print the error.
+    Checks the response from the Cloudflare API for errors and prints error details if present.
+
+    Args:
+        output (dict): The response body from the Cloudflare API.
+
+    Returns:
+        bool: False if an error is present in the response, True otherwise.
+
+    Side Effects:
+        Prints error messages to the console if errors are found in the response.
     """
     if output.get('error'):
         print(f'Error: {output['error']} - Success: {output['error_detail']['success']}')
@@ -119,12 +177,40 @@ def valid_response_cloudflare(output):
         return True
 
 def ip6_network_prefix(ip6_address):
-    """Given an IP v6 address this method will return the network prefix of the address."""
+    """
+    Given an IPv6 address (with optional prefix), return the corresponding IPv6 network.
+
+    Args:
+        ip6_address (str): An IPv6 address, optionally with a prefix (e.g., '2001:db8::1/64').
+
+    Returns:
+        ipaddress.IPv6Network: The IPv6 network corresponding to the given address and prefix.
+
+    Raises:
+        ValueError: If the provided address is not a valid IPv6 address.
+
+    Example:
+        >>> ip6_network_prefix('2001:db8::1/64')
+        IPv6Network('2001:db8::/64')
+    """
     ipv6_interface = ipaddress.IPv6Interface(ip6_address)
     return ipv6_interface.network
 
 def format_bytes(size_in_bytes):
-    """Given an integer value represending number of bytes this will return the number formatted with an indication of MB, GB, etc."""
+    """
+    Converts a size in bytes to a human-readable string with appropriate units.
+    Args:
+        size_in_bytes (int or float): The size in bytes to format.
+    Returns:
+        str: The formatted size string with units (e.g., '1.23 MB', '456.00 bytes').
+    Examples:
+        >>> format_bytes(1024)
+        '1.00 KB'
+        >>> format_bytes(1048576)
+        '1.00 MB'
+        >>> format_bytes(500)
+        '500.00 bytes'
+    """
     units = ["bytes", "KB", "MB", "GB", "TB", "PB"]  # Define the units
     power = 1024
     n = 0

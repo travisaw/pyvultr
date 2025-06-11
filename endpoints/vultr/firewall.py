@@ -3,15 +3,68 @@ from tabulate import tabulate
 from requests import get
 
 class Firewall:
+    """
+    A class to manage Vultr firewall groups and their rules via the Vultr API.
+    Attributes:
+        firewall_id (str): The ID of the selected firewall group.
+        firewall_desc (str): The description of the selected firewall group.
+        firewall_rules (list): List of rules for the selected firewall group.
+        firewall_rules_header (list): Column headers for displaying firewall rules.
+    Methods:
+        __init__(api):
+            Initializes the Firewall object with the provided API client.
+        get_firewalls():
+            Retrieves all firewall groups, prompts the user to select one, and loads its rules.
+        get_firewall():
+            Retrieves and updates the description of the currently selected firewall group.
+        print_firewall():
+            Prints details of the currently selected firewall group.
+        create_firewall_prompt():
+            Prompts the user for a new firewall group name and creates it.
+        create_firewall(body):
+            Creates a new firewall group with the provided body.
+        delete_firewall():
+            Deletes the currently selected firewall group.
+        get_firewall_rules():
+            Retrieves and stores the rules for the currently selected firewall group.
+        print_firewall_rules():
+            Prints the rules of the currently selected firewall group.
+        delete_all_firewall_rules():
+            Deletes all rules from the currently selected firewall group.
+        add_ip_to_firewall_rules():
+            Adds rules for the current public IPv4 address to the selected firewall group.
+        __firewall_selected():
+            Checks if a firewall group is selected; prints a message if not.
+    Note:
+        This class depends on external utility functions such as valid_response_vultr, print_input_menu, utc_to_local, and tabulate, as well as an API client with api_get, api_post, and api_delete methods.
+    """
     firewall_id = str('')
     firewall_desc = str('')
     firewall_rules = []
     firewall_rules_header = ['Type', 'Action', 'Protocol', 'Ip', 'Port', 'Notes']
 
     def __init__(self, api):
+        """
+        Initialize the class with the provided API client.
+
+        Args:
+            api: An instance of the API client used to make requests.
+        """
         self.api = api
 
     def get_firewalls(self):
+        """
+        Retrieves the list of firewall groups from the Vultr API, presents them to the user for selection,
+        and stores the selected firewall's ID and description as instance attributes. After selection,
+        it calls `get_firewall_rules()` to retrieve the rules for the chosen firewall group.
+
+        Returns:
+            None
+
+        Side Effects:
+            - Sets `self.firewall_id` and `self.firewall_desc` based on user selection.
+            - Calls `self.get_firewall_rules()` for the selected firewall group.
+        """
         url = 'firewalls'
         data = self.api.api_get(url)
         if valid_response_vultr(data):
@@ -21,6 +74,19 @@ class Firewall:
             self.get_firewall_rules()
 
     def get_firewall(self):
+        """
+        Retrieves the details of the currently selected firewall group from the Vultr API.
+
+        If a firewall group is selected, this method sends a GET request to the Vultr API to fetch
+        the firewall group's details. Upon receiving a valid response, it updates the instance's
+        `firewall_desc` attribute with the firewall group's description.
+
+        Returns:
+            None
+
+        Raises:
+            Any exceptions raised by the underlying API call or response validation are propagated.
+        """
         if self.__firewall_selected():
             url = f'firewalls/{self.firewall_id}'
             data = self.api.api_get(url)
@@ -28,6 +94,16 @@ class Firewall:
                 self.firewall_desc = data['firewall_group']['description']
     
     def print_firewall(self):
+        """
+        Prints detailed information about the currently selected firewall group.
+
+        This method retrieves the firewall group details from the Vultr API using the selected firewall ID.
+        If the API response is valid, it displays the firewall group's description, creation and modification dates
+        (converted to local time), instance count, rule count, and maximum rule count in a tabulated format.
+
+        Returns:
+            None
+        """
         if self.__firewall_selected():
             url = f'firewalls/{self.firewall_id}'
             data = self.api.api_get(url)
@@ -43,23 +119,73 @@ class Firewall:
                 print(tabulate(result))
 
     def create_firewall_prompt(self):
+        """
+        Prompts the user to enter a name for a new firewall, constructs a request body with the provided name,
+        and calls the method to create the firewall.
+
+        Returns:
+            None
+        """
         fw_name = input("New Firewall Name?: ")
         body = {'description': fw_name}
         self.create_firewall(body)
 
     def create_firewall(self, body):
+        """
+        Creates a new firewall group using the provided request body.
+
+        Args:
+            body (dict): The request payload containing firewall group details.
+
+        Returns:
+            None
+
+        Side Effects:
+            Sends a POST request to the 'firewalls' endpoint.
+            Prints a confirmation message if the firewall group is created successfully.
+        """
         url = 'firewalls'
         data = self.api.api_post(url, body)
         if valid_response_vultr(data):
             print(f" Created firewall '{data['firewall_group']['description']}'")
 
     def delete_firewall(self):
+        """
+        Deletes the firewall associated with this instance using the Vultr API.
+
+        Sends a DELETE request to the Vultr API for the firewall identified by `self.firewall_id`.
+        If the response is valid, prints the status and info returned by the API.
+
+        Returns:
+            None
+
+        Raises:
+            Any exceptions raised by the underlying API call or response validation.
+        """
         url = f'firewalls/{self.firewall_id}'
         data = self.api.api_delete(url)
         if valid_response_vultr(data):
             print(f" {data['status']}: {data['info']}")
 
     def get_firewall_rules(self):
+        """
+        Retrieves the firewall rules for the currently selected firewall and stores them in the `firewall_rules` attribute.
+
+        If a firewall is selected, this method sends a GET request to the Vultr API to fetch the rules associated with the selected firewall.
+        The rules are processed and stored as a list of lists, where each inner list contains the following fields for a rule:
+            - id
+            - type
+            - ip_type
+            - action
+            - protocol
+            - port
+            - subnet
+            - subnet_size
+            - source
+            - notes
+
+        If no firewall is selected, the `firewall_rules` attribute is set to an empty list.
+        """
         if self.__firewall_selected():
             url = f'firewalls/{self.firewall_id}/rules'
             data = self.api.api_get(url)
@@ -84,6 +210,16 @@ class Firewall:
             self.firewall_rules = []
 
     def print_firewall_rules(self):
+        """
+        Retrieves and prints the firewall rules in a tabular format.
+
+        This method calls `get_firewall_rules()` to update the list of firewall rules,
+        formats each rule into a row with selected fields, and prints the result using
+        the `tabulate` function with the specified headers.
+
+        Returns:
+            None
+        """
         self.get_firewall_rules()
         result = []
         for i in self.firewall_rules:
@@ -99,6 +235,21 @@ class Firewall:
         print(tabulate(result, self.firewall_rules_header))
 
     def delete_all_firewall_rules(self):
+        """
+        Deletes all firewall rules associated with the current firewall.
+
+        This method retrieves the current list of firewall rules and iteratively deletes each rule
+        by sending a DELETE request to the API. For each successful deletion, it prints the status
+        and additional information returned by the API.
+
+        Raises:
+            Any exceptions raised by the underlying API calls are not explicitly handled.
+
+        Note:
+            Assumes that `self.get_firewall_rules()` populates `self.firewall_rules` with a list of
+            rules, where each rule is an iterable and the first element (`i[0]`) is the rule ID.
+            Also assumes the existence of `self.api.api_delete()` and `valid_response_vultr()`.
+        """
         self.get_firewall_rules()
         for i in self.firewall_rules:
             url = f'firewalls/{self.firewall_id}/rules/{i[0]}'
@@ -107,6 +258,15 @@ class Firewall:
                 print(f" {data['status']}: {data['info']}")
 
     def add_ip_to_firewall_rules(self):
+        """
+        Adds firewall rules for the current public IPv4 address to the specified firewall.
+        This method retrieves the public IPv4 address of the machine using the ipify API,
+        then creates and adds firewall rules for TCP, UDP (on all ports), and ICMP protocols
+        for that IP address to the firewall identified by `self.firewall_id`. Each rule is
+        added via the Vultr API. The results are printed in a tabular format.
+        Returns:
+            None
+        """
         ip4 = get('https://api.ipify.org').content.decode('utf8')
         # ip6 = get('https://api64.ipify.org').content.decode('utf8')
         print('My public IP address is: {}'.format(ip4))
@@ -147,6 +307,13 @@ class Firewall:
         print(tabulate(result, self.firewall_rules_header))
 
     def __firewall_selected(self):
+        """
+        Checks if a firewall has been selected by verifying that `self.firewall_id` is not an empty string.
+
+        Returns:
+            bool: True if a firewall is selected (`self.firewall_id` is not empty), False otherwise.
+                  Prints a message if no firewall is selected.
+        """
         if self.firewall_id != '':
             return True
         else:

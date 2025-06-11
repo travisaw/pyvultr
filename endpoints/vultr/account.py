@@ -2,7 +2,19 @@ from util import utc_to_local
 from tabulate import tabulate
 
 def get_account_info(api):
-    """Print account info."""
+    """
+    Retrieves and prints the account information using the provided API client.
+
+    Args:
+        api: An API client instance with an `api_get` method for fetching account data.
+
+    Returns:
+        None. Prints a formatted table of account information to the console.
+
+    Raises:
+        KeyError: If expected keys are missing in the API response.
+        Exception: Propagates exceptions raised by the API client or utility functions.
+    """
     url = 'account'
     data = api.api_get(url)
     result = [
