@@ -63,6 +63,8 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
         try:
             option = input(prompt)
             if not valid_option(option, out_list, base_value):
+                print_list = []
+                inst_count = 1
                 continue
         except KeyboardInterrupt:
             print("\nExiting.")

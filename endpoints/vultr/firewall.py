@@ -21,13 +21,14 @@ class Firewall:
             self.get_firewall_rules()
 
     def get_firewall(self):
-        url = f'firewalls/{self.firewall_id}'
-        data = self.api.api_get(url)
-        if valid_response_vultr(data):
-            self.firewall_desc = data['firewall_group']['description']
+        if self.__firewall_selected():
+            url = f'firewalls/{self.firewall_id}'
+            data = self.api.api_get(url)
+            if valid_response_vultr(data):
+                self.firewall_desc = data['firewall_group']['description']
     
     def print_firewall(self):
-        if self.firewall_id != '':
+        if self.__firewall_selected():
             url = f'firewalls/{self.firewall_id}'
             data = self.api.api_get(url)
             if valid_response_vultr(data):
@@ -40,8 +41,6 @@ class Firewall:
                     ['Max Rule Count: ', data['firewall_group']['max_rule_count']]
                 ]
                 print(tabulate(result))
-        else:
-            print('No Firewall Selected!')
 
     def create_firewall_prompt(self):
         fw_name = input("New Firewall Name?: ")
@@ -61,25 +60,28 @@ class Firewall:
             print(f" {data['status']}: {data['info']}")
 
     def get_firewall_rules(self):
-        url = f'firewalls/{self.firewall_id}/rules'
-        data = self.api.api_get(url)
-        if valid_response_vultr(data):
-            result = []
-            for i in data['firewall_rules']:
-                row = [
-                    i['id'],
-                    i['type'],
-                    i['ip_type'],
-                    i['action'],
-                    i['protocol'],
-                    i['port'],
-                    i['subnet'],
-                    i['subnet_size'],
-                    i['source'],
-                    i['notes'],
-                ]
-                result.append(row)
-            self.firewall_rules = result
+        if self.__firewall_selected():
+            url = f'firewalls/{self.firewall_id}/rules'
+            data = self.api.api_get(url)
+            if valid_response_vultr(data):
+                result = []
+                for i in data['firewall_rules']:
+                    row = [
+                        i['id'],
+                        i['type'],
+                        i['ip_type'],
+                        i['action'],
+                        i['protocol'],
+                        i['port'],
+                        i['subnet'],
+                        i['subnet_size'],
+                        i['source'],
+                        i['notes'],
+                    ]
+                    result.append(row)
+                self.firewall_rules = result
+        else:
+            self.firewall_rules = []
 
     def print_firewall_rules(self):
         self.get_firewall_rules()
@@ -143,4 +145,10 @@ class Firewall:
                 result.append(detail_row)
         
         print(tabulate(result, self.firewall_rules_header))
-        
+
+    def __firewall_selected(self):
+        if self.firewall_id != '':
+            return True
+        else:
+            print('No Firewall Selected!')
+            return False        
