@@ -96,7 +96,7 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
                 print_row.append(i[j])
             print_list.append(print_row)
             inst_count += 1
-        print(tabulate(print_list)) # Print menu output 
+        print(tabulate(print_list)) # Print menu output
         try:
             option = input(prompt)
             if not valid_option(option, out_list, base_value):
@@ -125,7 +125,7 @@ def valid_option(option, options, base_value):
     except ValueError:
         print(f"Invalid Selection.")
         return False
-    
+
     match i_option:
         case 99:
             print('Option Coming Soon')

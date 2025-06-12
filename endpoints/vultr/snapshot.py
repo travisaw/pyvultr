@@ -121,7 +121,7 @@ class Snapshot:
         data = self.api.api_delete(url)
         if valid_response_vultr(data):
             print(f" {data['status']}: {data['info']}")
-    
+
     def update_snapshot(self, ss_name):
         """
         Updates the description of the currently selected snapshot.
@@ -163,10 +163,10 @@ class Snapshot:
         """
         match status:
             case 'pending':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}' 
+                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
             case 'complete':
-                return f'{Fore.GREEN}{status}{Style.RESET_ALL}' 
+                return f'{Fore.GREEN}{status}{Style.RESET_ALL}'
             case 'deleted':
-                return f'{Fore.RED}{status}{Style.RESET_ALL}' 
+                return f'{Fore.RED}{status}{Style.RESET_ALL}'
             case _:
                 return status

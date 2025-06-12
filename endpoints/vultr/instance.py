@@ -76,7 +76,7 @@ class Instance:
     def get_instances(self):
         """
         Fetches all Vultr compute instances and prompts the user to select one.
-    
+
         Retrieves the list of instances from the Vultr API, displays them in a menu for user selection,
         sets the selected instance's ID, and loads its details into the object's attributes.
         """

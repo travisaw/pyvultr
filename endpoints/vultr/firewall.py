@@ -92,7 +92,7 @@ class Firewall:
             data = self.api.api_get(url)
             if valid_response_vultr(data):
                 self.firewall_desc = data['firewall_group']['description']
-    
+
     def print_firewall(self):
         """
         Prints detailed information about the currently selected firewall group.
@@ -303,7 +303,7 @@ class Firewall:
                     data['firewall_rule']['notes'],
                 ]
                 result.append(detail_row)
-        
+
         print(tabulate(result, self.firewall_rules_header))
 
     def __firewall_selected(self):
@@ -318,4 +318,4 @@ class Firewall:
             return True
         else:
             print('No Firewall Selected!')
-            return False        
+            return False
