@@ -290,6 +290,20 @@ class Zone:
         }
         self.create_dns_record(body)
 
+    def create_update_dns_record(self, body):
+        if self.does_dns_record_exist(body):
+            # Prompt user to update or create a new DNS record
+            print('DNS Record already exists. Update record or create a new one? (y/n)')
+            choice = input('Enter y to update, n to create a new record: ').strip().lower()
+            if choice == 'y':
+                # Update existing DNS record
+                self.update_dns_record(body)
+            elif choice == 'n':
+                # Create a new DNS record
+                self.create_dns_record(body)
+            else:
+                print('Invalid choice. Please enter y or n.')
+
     def create_dns_record(self, body):
         """
         Creates a DNS record in the specified Cloudflare zone using the provided details.
@@ -313,6 +327,16 @@ class Zone:
         if valid_response_cloudflare(data):
             self.get_zone()
             print('DNS entry created. Record will need to be selected.')
+
+    def update_dns_record(self, body):
+        url = f'zones/{self.zone_id}/dns_records'
+        data = self.api.api_put(url, body)
+        if valid_response_cloudflare(data):
+            self.get_zone()
+            print('DNS entry created. Record will need to be selected.')
+
+    def does_dns_record_exist(self, body):
+        pass
 
     def delete_dns_record(self):
         """
