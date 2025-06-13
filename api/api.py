@@ -75,6 +75,26 @@ class Api():
         response = requests.put(call_url, json=data, headers=headers)
         return self.process_response(response)
 
+    def api_patch(self, url, data):
+        """
+        Sends a PATCH request to the specified API endpoint with the provided data.
+
+        Args:
+            url (str): The API endpoint (relative to the base URL) to send the PATCH request to.
+            data (dict): The JSON-serializable data to include in the PATCH request body.
+
+        Returns:
+            Any: The processed response from the API, as returned by `self.process_response`.
+
+        Raises:
+            requests.RequestException: If the PATCH request fails due to a network problem.
+            Exception: If `self.process_response` raises an exception.
+        """
+        call_url = self.base_url + url
+        headers = self.__get_headers()
+        response = requests.patch(call_url, json=data, headers=headers)
+        return self.process_response(response)
+
     def api_delete(self, url):
         """
         Sends an HTTP DELETE request to the specified URL.

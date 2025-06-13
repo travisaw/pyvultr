@@ -278,33 +278,52 @@ class Zone:
         Calls:
             self.create_dns_record(body): Creates the DNS record with the specified details.
         """
-        name = input('DNS Name:')
-        content = input('IP Address:')
-        body = {
-            "comment": "Added by pyvultr",
-            "content": content,
-            "name": name,
-            "proxied": True,
-            "ttl": 300,
-            "type": "A"
-        }
-        self.create_dns_record(body)
+        if self.__zone_selected():  
+            name = input('DNS Name:')
+            content = input('IP Address:')
+            body = {
+                "comment": "Added by pyvultr",
+                "content": content,
+                "name": name,
+                "proxied": True,
+                "ttl": 300,
+                "type": "A"
+            }
+            self.create_update_dns_record(body)
+            # self.create_dns_record(body)
 
     def create_update_dns_record(self, body):
-        if self.does_dns_record_exist(body):
-            # Prompt user to update or create a new DNS record
-            print('DNS Record already exists. Update record or create a new one? (y/n)')
-            choice = input('Enter y to update, n to create a new record: ').strip().lower()
-            if choice == 'y':
-                # Update existing DNS record
-                self.update_dns_record(body)
-            elif choice == 'n':
-                # Create a new DNS record
-                self.create_dns_record(body)
-            else:
-                print('Invalid choice. Please enter y or n.')
+        """
+        Creates or updates a DNS record for the selected zone.
 
-    def create_dns_record(self, body):
+        If a DNS record matching the provided body already exists, prompts the user to either update the existing record or create a new one.
+        If no matching DNS record exists, creates a new DNS record.
+        After the operation, retrieves and displays the current DNS records.
+
+        Args:
+            body (dict): The DNS record data to create or update.
+
+        Returns:
+            None
+        """
+        if self.__zone_selected():
+            if self.__does_dns_record_exist(body):
+                # Prompt user to update or create a new DNS record
+                print('DNS Record already exists. Update record or create a new one? (y/n)')
+                choice = input('Enter y to update, n to create a new record: ').strip().lower()
+                if choice == 'y':
+                    # Update existing DNS record
+                    self.__update_dns_record(body)
+                elif choice == 'n':
+                    # Create a new DNS record
+                    self.__create_dns_record(body)
+                else:
+                    print('Invalid choice. Please enter y or n.')
+            else:
+                self.__create_dns_record(body)
+            self.get_dns_records()
+
+    def __create_dns_record(self, body):
         """
         Creates a DNS record in the specified Cloudflare zone using the provided details.
 
@@ -328,15 +347,25 @@ class Zone:
             self.get_zone()
             print('DNS entry created. Record will need to be selected.')
 
-    def update_dns_record(self, body):
-        url = f'zones/{self.zone_id}/dns_records'
-        data = self.api.api_put(url, body)
+    def __update_dns_record(self, body):
+        """
+        Updates a DNS record for the current zone using the provided request body.
+
+        Args:
+            body (dict): The data to update the DNS record with.
+
+        Returns:
+            None
+
+        Side Effects:
+            - Sends a PATCH request to update the DNS record.
+            - If the response is valid, refreshes the zone information and prints a notification.
+        """
+        url = f'zones/{self.zone_id}/dns_records/{self.dns_record_id}'
+        data = self.api.api_patch(url, body)
         if valid_response_cloudflare(data):
             self.get_zone()
-            print('DNS entry created. Record will need to be selected.')
-
-    def does_dns_record_exist(self, body):
-        pass
+            print('DNS entry updated. Record will need to be selected.')
 
     def delete_dns_record(self):
         """
@@ -349,13 +378,15 @@ class Zone:
         Returns:
             None
         """
-        # if 'prod' in self.instance_tags:
-        #     print(f"CANNOT DELETE PRODUCTION INSTANCE")
-        #     return
-        url = f'zones/{self.zone_id}/dns_records/{self.dns_record_id}'
-        data = self.api.api_delete(url)
-        if valid_response_cloudflare(data):
-            print(f"Success: {data['success']} - Record deleted.")
+        if self.__zone_selected():
+            # if 'prod' in self.instance_tags:
+            #     print(f"CANNOT DELETE PRODUCTION INSTANCE")
+            #     return
+            url = f'zones/{self.zone_id}/dns_records/{self.dns_record_id}'
+            data = self.api.api_delete(url)
+            if valid_response_cloudflare(data):
+                print(f"Success: {data['success']} - Record deleted.")
+            self.get_dns_records()
 
     def __zone_selected(self):
         """
@@ -369,3 +400,10 @@ class Zone:
         else:
             print('No DNS Zone Selected!')
             return False
+
+    def __does_dns_record_exist(self, body):
+        for i in self.dns_records:
+            if i['name'] == body['name'] + '.' + self.zone_detail['name'] and i['type'] == body['type']:
+                self.dns_record_id = i['id']
+                return True
+        return False
