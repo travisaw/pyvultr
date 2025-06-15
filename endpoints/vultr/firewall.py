@@ -41,6 +41,7 @@ class Firewall:
     firewall_desc = str('')
     firewall_rules = []
     firewall_rules_header = ['Type', 'Action', 'Protocol', 'Ip', 'Port', 'Notes']
+    firewall_rule_id = str('')
 
     def __init__(self, api, ipify):
         """
@@ -258,10 +259,46 @@ class Firewall:
             return
         self.get_firewall_rules()
         for i in self.firewall_rules:
-            url = f'firewalls/{self.firewall_id}/rules/{i[0]}'
-            data = self.api.api_delete(url)
-            if valid_response_vultr(data):
-                print(f" {data['status']}: {data['info']}")
+            self.firewall_rule_id = i[0]
+            self.delete_firewall_rule()
+
+    def delete_firewall_rule_with_notes(self):
+        if not self.__firewall_selected():
+            return
+
+        # list all unique firewall rule notes
+        notes = []
+        for i in self.firewall_rules:
+            new_dict = {'name': i[9]}
+            if new_dict not in notes:
+                notes.append(new_dict)
+
+        # Prompt user to select a firewall rule
+        option, fw_list = print_input_menu(notes, 'What firewall to select?: ', 'name', ['name'], False)
+
+        # Delete firewall rules with matching notes
+        for i in self.firewall_rules:
+            if i[9] == fw_list[int(option) - 1][0]:
+                self.firewall_rule_id = i[0]
+                self.delete_firewall_rule()
+
+    def delete_firewall_rule(self):
+        """
+        Deletes a selected firewall rule from the currently selected firewall.
+        This method checks if both a firewall and a firewall rule are selected.
+        If both are selected, it sends a DELETE request to the API to remove the specified firewall rule.
+        Upon a successful response, it prints the status and information returned by the API.
+        Returns:
+            None
+        """
+        if not self.__firewall_selected():
+            return
+        if not self.__firewall_rule_selected():
+            return
+        url = f'firewalls/{self.firewall_id}/rules/{self.firewall_rule_id}'
+        data = self.api.api_delete(url)
+        if valid_response_vultr(data):
+            print(f" {data['status']}: {data['info']}")
 
     def add_ip4_to_firewall_rules(self):
         """
@@ -318,7 +355,7 @@ class Firewall:
         """
         if not self.__firewall_selected():
             return
-        
+
         result = []
         params = (
             ('tcp', '1:65535',),
@@ -365,4 +402,17 @@ class Firewall:
             return True
         else:
             print('No Firewall Selected!')
+            return False
+
+    def __firewall_rule_selected(self):
+        """
+        Checks if a firewall rule is currently selected.
+        Returns:
+            bool: True if a firewall rule ID is set (not an empty string), False otherwise.
+                  Prints a message if no firewall rule is selected.
+        """
+        if self.firewall_rule_id != '':
+            return True
+        else:
+            print('No Firewall Rule Selected!')
             return False

@@ -201,9 +201,10 @@ class Menu():
             {'id': 4, 'name': 'Delete Firewall'},
             {'id': 5, 'name': 'Show Firewall Rules'},
             {'id': 6, 'name': 'Delete All Firewall Rules'},
-            {'id': 7, 'name': 'Add Current IP4 to Firewall Rules'},
-            {'id': 8, 'name': 'Add Current IP6 to Firewall Rules'},
-            {'id': 9, 'name': 'Go Back'},
+            {'id': 7, 'name': 'Delete Firewall Rules by Note'},
+            {'id': 8, 'name': 'Add Current IP4 to Firewall Rules'},
+            {'id': 9, 'name': 'Add Current IP6 to Firewall Rules'},
+            {'id': 10, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
@@ -226,12 +227,15 @@ class Menu():
                 self.obj_fw.delete_all_firewall_rules()
                 self.firewall()
             case '7':
-                self.obj_fw.add_ip4_to_firewall_rules()
+                self.obj_fw.delete_firewall_rule_with_notes()
                 self.firewall()
             case '8':
-                self.obj_fw.add_ip6_to_firewall_rules()
+                self.obj_fw.add_ip4_to_firewall_rules()
                 self.firewall()
             case '9':
+                self.obj_fw.add_ip6_to_firewall_rules()
+                self.firewall()
+            case '10':
                 self.main_menu()
 
     def snapshot(self):
