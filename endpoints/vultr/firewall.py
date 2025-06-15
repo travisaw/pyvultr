@@ -162,6 +162,8 @@ class Firewall:
         Raises:
             Any exceptions raised by the underlying API call or response validation.
         """
+        if not self.__firewall_selected():
+            return
         url = f'firewalls/{self.firewall_id}'
         data = self.api.api_delete(url)
         if valid_response_vultr(data):
@@ -220,6 +222,8 @@ class Firewall:
         Returns:
             None
         """
+        if not self.__firewall_selected():
+            return
         self.get_firewall_rules()
         result = []
         for i in self.firewall_rules:
@@ -250,6 +254,8 @@ class Firewall:
             rules, where each rule is an iterable and the first element (`i[0]`) is the rule ID.
             Also assumes the existence of `self.api.api_delete()` and `valid_response_vultr()`.
         """
+        if not self.__firewall_selected():
+            return
         self.get_firewall_rules()
         for i in self.firewall_rules:
             url = f'firewalls/{self.firewall_id}/rules/{i[0]}'
@@ -257,22 +263,62 @@ class Firewall:
             if valid_response_vultr(data):
                 print(f" {data['status']}: {data['info']}")
 
-    def add_ip_to_firewall_rules(self):
+    def add_ip4_to_firewall_rules(self):
         """
-        Adds firewall rules for the current public IPv4 address to the specified firewall.
-        This method retrieves the public IPv4 address of the machine using the ipify API,
-        then creates and adds firewall rules for TCP, UDP (on all ports), and ICMP protocols
-        for that IP address to the firewall identified by `self.firewall_id`. Each rule is
-        added via the Vultr API. The results are printed in a tabular format.
+        Prompts the user for notes and adds the current public IPv4 address to the firewall rules.
+        This method retrieves the user's public IPv4 address using the `ipify` service,
+        prompts the user to enter notes for the firewall rule (defaulting to 'Added by pyvultr' if left blank),
+        and then adds the IP address to the firewall rules with the provided notes.
         Returns:
             None
         """
+        if not self.__firewall_selected():
+            return
+        notes = input("Notes for the firewall rules?['Added by pyvultr']: ")
+        if notes == '':
+            notes = 'Added by pyvultr'
         ip4 = self.ipify.get_ip4()
-        # ip6 = self.ipify.get_ip6()
-        print('My public IP address is: {}'.format(ip4))
-        # print('My public IP address is: {}'.format(ip6))
-        # print('My public IP address is: {}'.format(ip6_network_prefix(ip6)))
+        print('My public IP4 address is: {}'.format(ip4))
+        self.add_ip_to_firewall_rules('v4', ip4, notes)
 
+    def add_ip6_to_firewall_rules(self):
+        """
+        Prompts the user for notes and adds the current public IPv6 address to the firewall rules.
+        This method retrieves the user's public IPv6 address using the `ipify` service,
+        prompts the user to enter notes for the firewall rule (defaulting to 'Added by pyvultr' if left blank),
+        and then adds the IP address to the firewall rules with the provided notes.
+        Returns:
+            None
+        """
+        if not self.__firewall_selected():
+            return
+        notes = input("Notes for the firewall rules?['Added by pyvultr']: ")
+        if notes == '':
+            notes = 'Added by pyvultr'
+        ip6 = self.ipify.get_ip6()
+        print('My public IP6 address is: {}'.format(ip6))
+        # self.add_ip_to_firewall_rules(ip6_network_prefix(ip6), notes)
+        self.add_ip_to_firewall_rules('v6', ip6, notes)
+
+    def add_ip_to_firewall_rules(self, type, ip_address, notes):
+        """
+        Adds a given IP address to the firewall rules for all supported protocols (TCP, UDP, ICMP).
+        Args:
+            type (str): The type of IP address (e.g., 'v4' or 'v6').
+            ip_address (str): The IP address to add to the firewall rules.
+            notes (str): Notes or description for the firewall rule.
+        Returns:
+            None
+        Side Effects:
+            - Sends POST requests to the API to add firewall rules for TCP, UDP, and ICMP protocols.
+            - Prints a message for each successfully added rule.
+            - Displays a table of the added firewall rules.
+        Preconditions:
+            - A firewall must be selected (self.__firewall_selected() returns True).
+        """
+        if not self.__firewall_selected():
+            return
+        
         result = []
         params = (
             ('tcp', '1:65535',),
@@ -283,14 +329,15 @@ class Firewall:
         url = f'firewalls/{self.firewall_id}/rules'
         for p in params:
             body = {
-                    "ip_type": "v4",
+                    "ip_type": type,
                     "protocol": p[0],
                     "port": p[1],
-                    "subnet": ip4,
+                    "subnet": ip_address,
                     "subnet_size": 32,
                     "source": "",
-                    "notes": "Example Firewall Rule"
+                    "notes": notes
                 }
+
             data = self.api.api_post(url, body)
             if valid_response_vultr(data):
                 print('Added Firewall Rule')
