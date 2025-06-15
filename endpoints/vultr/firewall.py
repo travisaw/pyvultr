@@ -263,6 +263,13 @@ class Firewall:
             self.delete_firewall_rule()
 
     def delete_firewall_rule_with_notes(self):
+        """
+        Deletes firewall rules based on user-selected notes.
+        This method first checks if a firewall is selected. It then compiles a list of unique notes from the existing firewall rules.
+        The user is prompted to select a note from this list. All firewall rules with a note matching the user's selection are deleted.
+        Returns:
+            None
+        """
         if not self.__firewall_selected():
             return
 
