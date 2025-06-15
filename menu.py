@@ -347,6 +347,13 @@ class Menu():
                 self.main_menu()
 
     def other(self):
+        """
+        Displays a menu with additional options for the user, such as viewing their IP address or returning to the main menu.
+        Presents the user with a list of actions:
+            1. Display the user's IP address by calling `self.obj_ip.print_ip()` and then redisplays this menu.
+            2. Return to the main menu by calling `self.main_menu()`.
+        Utilizes `print_input_menu` to render the menu and handle user input.
+        """
 
         options = [
             {'id': 1, 'name': 'My IP Address'},
