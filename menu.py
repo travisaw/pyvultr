@@ -6,6 +6,7 @@ from endpoints.vultr.plan import Plan
 from endpoints.vultr.region import Region
 from endpoints.vultr.snapshot import Snapshot
 from endpoints.cloudflare.zone import Zone
+from endpoints.ipify import Ipify
 from util import print_input_menu
 
 class Menu():
@@ -58,13 +59,14 @@ class Menu():
             obj_cf: Zone object for Cloudflare zones.
             obj_i: Instance object for Vultr compute instances, initialized with dependencies.
         """
-        self.vultr_api = vultr_api              # Vultr API Object
-        self.cloudflare_api = cloudflare_api    # Cloudflare API Object
-        self.obj_fw = Firewall(self.vultr_api)  # Firewall Object
-        self.obj_p = Plan(self.vultr_api)       # Vultr Compute Plan Object
-        self.obj_r = Region(self.vultr_api)     # Vultr Region Object
-        self.obj_ss = Snapshot(self.vultr_api)  # Vultr Snapshot Object
-        self.obj_cf = Zone(self.cloudflare_api) # Cloudflare Zone Object
+        self.vultr_api = vultr_api               # Vultr API Object
+        self.cloudflare_api = cloudflare_api     # Cloudflare API Object
+        self.obj_ip = Ipify()                    # Ipify Zone Object
+        self.obj_fw = Firewall(self.vultr_api, self.obj_ip)   # Firewall Object
+        self.obj_p = Plan(self.vultr_api)        # Vultr Compute Plan Object
+        self.obj_r = Region(self.vultr_api)      # Vultr Region Object
+        self.obj_ss = Snapshot(self.vultr_api)   # Vultr Snapshot Object
+        self.obj_cf = Zone(self.cloudflare_api)  # Cloudflare Zone Object
         self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r) # Vultr Compute Instance Object
 
     def main_menu(self):
@@ -80,7 +82,8 @@ class Menu():
             {'id': 3, 'name': 'Firewall'},
             {'id': 4, 'name': 'Snapshot'},
             {'id': 5, 'name': 'DNS Zones'},
-            {'id': 6, 'name': 'Exit'},
+            {'id': 6, 'name': 'Other'},
+            {'id': 7, 'name': 'Exit'},
         ]
         option, inst_list = print_input_menu(options, 'What area?: ', 'id', ['name'], False)
         match option:
@@ -95,6 +98,8 @@ class Menu():
             case '5':
                 self.dns_zone()
             case '6':
+                self.other()
+            case '7':
                 exit()
 
     def account(self):
@@ -327,4 +332,18 @@ class Menu():
                 self.obj_cf.verify_token()
                 self.dns_zone()
             case '9':
+                self.main_menu()
+
+    def other(self):
+
+        options = [
+            {'id': 1, 'name': 'My IP Address'},
+            {'id': 2, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
+        match option:
+            case '1':
+                self.obj_ip.print_ip()
+                self.other()
+            case '2':
                 self.main_menu()

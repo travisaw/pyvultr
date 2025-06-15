@@ -1,6 +1,5 @@
 from util import utc_to_local, print_input_menu, valid_response_vultr, ip6_network_prefix
 from tabulate import tabulate
-from requests import get
 
 class Firewall:
     """
@@ -43,7 +42,7 @@ class Firewall:
     firewall_rules = []
     firewall_rules_header = ['Type', 'Action', 'Protocol', 'Ip', 'Port', 'Notes']
 
-    def __init__(self, api):
+    def __init__(self, api, ipify):
         """
         Initialize the class with the provided API client.
 
@@ -51,6 +50,7 @@ class Firewall:
             api: An instance of the API client used to make requests.
         """
         self.api = api
+        self.ipify = ipify
 
     def get_firewalls(self):
         """
@@ -267,8 +267,8 @@ class Firewall:
         Returns:
             None
         """
-        ip4 = get('https://api.ipify.org').content.decode('utf8')
-        # ip6 = get('https://api64.ipify.org').content.decode('utf8')
+        ip4 = self.ipify.get_ip4()
+        # ip6 = self.ipify.get_ip6()
         print('My public IP address is: {}'.format(ip4))
         # print('My public IP address is: {}'.format(ip6))
         # print('My public IP address is: {}'.format(ip6_network_prefix(ip6)))
