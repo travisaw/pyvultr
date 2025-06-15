@@ -246,6 +246,25 @@ class Instance:
         if valid_response_vultr(data):
             print(f" {data['status']}: {data['info']}")
 
+    def update_firewall(self):
+        """
+        Updates the firewall settings for the current instance.
+
+        This method retrieves the current firewall settings and prompts the user to select a new firewall group.
+        If a valid selection is made, it updates the instance's firewall group ID and prints a confirmation message.
+
+        Returns:
+            None
+        """
+        self.fw_obj.get_firewalls()
+        url = f'instances/{self.instance_id}'
+        body = {
+            "firewall_group_id": None
+        }
+        data = self.api.api_patch(url, body)
+        if valid_response_vultr(data):
+            print(f"Firewall updated to {self.fw_obj.firewall_desc}")
+
     def dns_from_hostname_ip4(self):
         self.cf_obj.get_zones() # Select DNS zone
         if self.instance_ip4 == '0.0.0.0' or self.instance_ip4 == '':
