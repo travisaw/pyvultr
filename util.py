@@ -110,16 +110,25 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
 
 def valid_option(option, options, base_value):
     """
-    Checks if a user's selected option is valid based on a list of available options and a base value.
-    Parameters:
-        option (str or int): The user's input selection, expected to be convertible to an integer.
-        options (list): The list of valid options to select from.
-        base_value (int): The starting index for valid options (typically 0 or 1).
+    Validates if the provided option is a valid selection from a list of options, considering a base value offset.
+    Args:
+        option (str or int): The user's selected option, expected to be convertible to an integer.
+        options (list): The list of available options to select from.
+        base_value (int): The starting index or offset for valid options.
     Returns:
-        bool: True if the selection is valid, False otherwise.
+        bool: True if the option is a valid selection within the allowed range; False otherwise.
     Side Effects:
         Prints messages to stdout for invalid selections, out-of-range selections, or options marked as "coming soon".
+    Notes:
+        - If `option` is not an integer, prints "Invalid Selection." and returns False.
+        - If `option` is 98 or 99, prints "Option Coming Soon".
+        - If `option` is outside the valid range, prints a warning and returns False.
     """
+    if base_value < 0:
+        base_value = 0
+
+    options_len = len(options) - 1 + base_value
+
     try:
         i_option = int(option)
     except ValueError:
@@ -132,7 +141,7 @@ def valid_option(option, options, base_value):
         case 98:
             print('Option Coming Soon')
 
-    if not base_value <= i_option <= len(options):
+    if not base_value <= i_option <= options_len:
         print('Selection is out of range. Select valid option.')
         return False
 

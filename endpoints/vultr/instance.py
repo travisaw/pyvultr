@@ -259,7 +259,7 @@ class Instance:
             "ttl": 300,
             "type": "A"
         }
-        self.cf_obj.create_dns_record(body)
+        self.cf_obj.create_update_dns_record(body)
 
     def dns_from_hostname_ip6(self):
         pass
