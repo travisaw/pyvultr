@@ -71,9 +71,17 @@ class Region:
             create_data_cache(self.cache_file, data)
 
     def print_all_regions(self):
-        # for region in self.regions['regions']:
-        #     print(f"Region ID: {region['id']}, Name: {region['city']}")
         print_output_table(self.regions['regions'], headers=['id', 'city', 'country', 'continent'])
+
+    def print_preferred_regions(self):
+        options = ['atl','ewr','ord','dfw','sjc','lhr','ams',]
+        for o in options:
+            for region in self.regions["regions"]:
+                if region.get("id") == o:
+                    print(f'{o} - {region["city"]}, {region["country"]}')
+                    break
+            else:
+                print(f'{o} - Airport code not found')
 
     def get_preferred_region(self):
         """
@@ -98,3 +106,4 @@ class Region:
         option, r_list = print_input_menu(options, 'What region to select?: ', 'id', ['name'], False)
         self.region_id = r_list[int(option) - 1][0]
         self.region_desc = r_list[int(option) - 1][1]
+

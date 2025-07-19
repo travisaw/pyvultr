@@ -332,19 +332,19 @@ class Menu():
         """
         Displays a menu for region-related actions and handles user selection.
         The menu provides the following options:
-            1. Save Compute Regions: Saves the current compute regions.
-            2. Show Selected Compute Region: Displays the currently selected compute region.
-            3. Print All Regions: Prints all available regions.
-            4. Go Back: Returns to the main menu.
-        Based on the user's selection, the corresponding method from the region object (`self.obj_r`) is called,
-        and the menu is either redisplayed or the main menu is shown.
+            1. Save Compute Regions: Saves the current compute regions using obj_r.save_regions().
+            2. Show Selected Compute Region: Displays the preferred compute region using obj_r.get_preferred_region().
+            3. Print All Regions: Prints all available regions using obj_r.print_all_regions().
+            4. Print Preferred Regions: Prints the preferred regions using obj_r.print_preferred_regions().
+            5. Go Back: Returns to the main menu.
+        After performing the selected action, the method either redisplays the regions menu or returns to the main menu.
         """
-
         options = [
             {'id': 1, 'name': 'Save Compute Regions'},
             {'id': 2, 'name': 'Show Selected Compute Region'},
-            {'id': 2, 'name': 'Print All Regions'},
-            {'id': 4, 'name': 'Go Back'},
+            {'id': 3, 'name': 'Print All Regions'},
+            {'id': 4, 'name': 'Print Preferred Regions'},
+            {'id': 5, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
@@ -358,6 +358,9 @@ class Menu():
                 self.obj_r.print_all_regions()
                 self.main_menu()
             case '4':
+                self.obj_r.print_preferred_regions()
+                self.main_menu()
+            case '5':
                 self.main_menu()
 
     def dns_zone(self):
