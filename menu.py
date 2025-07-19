@@ -81,9 +81,11 @@ class Menu():
             {'id': 2, 'name': 'Instances'},
             {'id': 3, 'name': 'Firewall'},
             {'id': 4, 'name': 'Snapshot'},
-            {'id': 5, 'name': 'DNS Zones'},
-            {'id': 6, 'name': 'Other'},
-            {'id': 7, 'name': 'Exit'},
+            {'id': 5, 'name': 'Compute Plans'},
+            {'id': 6, 'name': 'Compute Regions'},
+            {'id': 7, 'name': 'DNS Zones'},
+            {'id': 8, 'name': 'Other'},
+            {'id': 9, 'name': 'Exit'},
         ]
         option, inst_list = print_input_menu(options, 'What area?: ', 'id', ['name'], False)
         match option:
@@ -96,10 +98,14 @@ class Menu():
             case '4':
                 self.snapshot()
             case '5':
-                self.dns_zone()
+                self.plans()
             case '6':
-                self.other()
+                self.regions()
             case '7':
+                self.dns_zone()
+            case '8':
+                self.other()
+            case '9':
                 exit()
 
     def account(self):
@@ -287,6 +293,71 @@ class Menu():
                 self.obj_ss.update_snapshot(ss_name)
                 self.snapshot()
             case '6':
+                self.main_menu()
+
+    def plans(self):
+        """
+        Displays the Vultr Compute Plans Menu and handles user interactions for managing compute plans.
+
+        This method presents a menu with options to show all compute plans, show details of a selected plan,
+        and return to the main menu. Based on the user's selection, it calls the appropriate methods from the
+        Plan object (`self.obj_p`) or navigates back to the main menu.
+
+        Menu Options:
+            1. Show All Compute Plans - Lists all available compute plans.
+            2. Show Selected Compute Plan - Displays details of a selected compute plan.
+            3. Go Back - Returns to the main menu.
+        """
+        options = [
+            {'id': 1, 'name': 'Save Compute Plans'},
+            {'id': 2, 'name': 'Show Selected Compute Plan'},
+            {'id': 3, 'name': 'Print All Compute Plans'},
+            {'id': 4, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
+        match option:
+            case '1':
+                self.obj_p.save_plans()
+                self.plans()
+            case '2':
+                self.obj_p.print_plan()
+                self.plans()
+            case '3':
+                self.obj_p.print_all_plans()
+                self.main_menu()
+            case '4':
+                self.main_menu()
+
+    def regions(self):
+        """
+        Displays a menu for region-related actions and handles user selection.
+        The menu provides the following options:
+            1. Save Compute Regions: Saves the current compute regions.
+            2. Show Selected Compute Region: Displays the currently selected compute region.
+            3. Print All Regions: Prints all available regions.
+            4. Go Back: Returns to the main menu.
+        Based on the user's selection, the corresponding method from the region object (`self.obj_r`) is called,
+        and the menu is either redisplayed or the main menu is shown.
+        """
+
+        options = [
+            {'id': 1, 'name': 'Save Compute Regions'},
+            {'id': 2, 'name': 'Show Selected Compute Region'},
+            {'id': 2, 'name': 'Print All Regions'},
+            {'id': 4, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
+        match option:
+            case '1':
+                self.obj_r.save_regions()
+                self.regions()
+            case '2':
+                self.obj_r.get_preferred_region()
+                self.regions()
+            case '3':
+                self.obj_r.print_all_regions()
+                self.main_menu()
+            case '4':
                 self.main_menu()
 
     def dns_zone(self):

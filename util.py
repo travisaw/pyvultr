@@ -108,6 +108,28 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
             exit()
         return option, out_list
 
+def print_output_table(data, headers=None):
+    """
+    Prints a formatted table to the console using the provided data and headers.
+    
+    Args:
+        data (list of dict): The data to be displayed in the table, where each dictionary represents a row.
+        headers (list of str, optional): The headers for the table columns. If None, keys from the first row are used.
+    
+    Returns:
+        None
+    """
+    if not data:
+        print("No data to display.")
+        return
+    
+    if headers is None:
+        headers = list(data[0].keys())
+    
+    table_data = [[row.get(header, '') for header in headers] for row in data]
+    # print(tabulate(table_data, headers=headers, tablefmt='grid'))
+    print(tabulate(table_data, headers=headers))
+
 def valid_option(option, options, base_value):
     """
     Validates if the provided option is a valid selection from a list of options, considering a base value offset.
