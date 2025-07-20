@@ -63,8 +63,8 @@ class Menu():
         self.cloudflare_api = cloudflare_api     # Cloudflare API Object
         self.obj_ip = Ipify()                    # Ipify Zone Object
         self.obj_fw = Firewall(self.vultr_api, self.obj_ip)   # Firewall Object
-        self.obj_p = Plan(self.vultr_api)        # Vultr Compute Plan Object
         self.obj_r = Region(self.vultr_api)      # Vultr Region Object
+        self.obj_p = Plan(self.vultr_api, self.obj_r)        # Vultr Compute Plan Object
         self.obj_ss = Snapshot(self.vultr_api)   # Vultr Snapshot Object
         self.obj_cf = Zone(self.cloudflare_api)  # Cloudflare Zone Object
         self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r) # Vultr Compute Instance Object
@@ -311,8 +311,10 @@ class Menu():
         options = [
             {'id': 1, 'name': 'Save Compute Plans'},
             {'id': 2, 'name': 'Show Selected Compute Plan'},
-            {'id': 3, 'name': 'Print All Compute Plans'},
-            {'id': 4, 'name': 'Go Back'},
+            {'id': 3, 'name': 'Select From All Plans'},
+            {'id': 4, 'name': 'Select From Preferred Plans'},
+            {'id': 5, 'name': 'Select From Region Plans'},
+            {'id': 6, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
@@ -323,9 +325,15 @@ class Menu():
                 self.obj_p.print_plan()
                 self.plans()
             case '3':
-                self.obj_p.print_all_plans()
+                self.obj_p.get_all_plan()
                 self.main_menu()
             case '4':
+                self.obj_p.get_preferred_plan()
+                self.main_menu()
+            case '5':
+                self.obj_p.get_preferred_plan()
+                self.main_menu()
+            case '6':
                 self.main_menu()
 
     def regions(self):
@@ -342,8 +350,8 @@ class Menu():
         options = [
             {'id': 1, 'name': 'Save Compute Regions'},
             {'id': 2, 'name': 'Show Selected Compute Region'},
-            {'id': 3, 'name': 'Print All Regions'},
-            {'id': 4, 'name': 'Print Preferred Regions'},
+            {'id': 3, 'name': 'Select From All Regions'},
+            {'id': 4, 'name': 'Select From Preferred Regions'},
             {'id': 5, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
@@ -355,10 +363,10 @@ class Menu():
                 self.obj_r.get_preferred_region()
                 self.regions()
             case '3':
-                self.obj_r.print_all_regions()
+                self.obj_r.get_all_region()
                 self.main_menu()
             case '4':
-                self.obj_r.print_preferred_regions()
+                self.obj_r.get_preferred_region()
                 self.main_menu()
             case '5':
                 self.main_menu()

@@ -3,22 +3,31 @@ from data import create_data_cache, load_data_cache
 
 class Plan:
     """
-    Plan class for managing Vultr plans with caching.
-    This class provides methods to load, cache, and retrieve plan data from the Vultr API.
-    It supports loading plans from a local cache file to minimize API requests and includes
-    functionality to save fresh plan data when the cache is missing or outdated. Additionally,
-    it offers a method to retrieve a list of preferred plans, which can be customized as needed.
+    Plan class for managing and selecting Vultr server plans.
+        plan_id (str): The ID of the selected plan.
+        plan_desc (str): The description of the selected plan.
         api: Instance of the API client used for making requests.
-        cache_file: Filename for caching plan data locally.
-        plans: List of plans loaded from the cache or API.
+        cache_file (str): The filename used for caching plan data.
+        plans (list): List of plans loaded from the cache or API.
+        obj_region: The region object associated with the plan.
     Methods:
-        __init__(api): Initializes the Plan class with the provided API client.
-        load_plans(): Loads plans from the cache file or retrieves them from the API if not cached.
-        save_plans(): Retrieves plan data from the Vultr API and saves it to the cache file.
-        get_preferred_plan(): Returns a hardcoded list of preferred plans for user selection.
+        __init__(api, region):
+            Initializes the Plan class with the provided API client and region, sets up caching, and loads available plans.
+        load_plans():
+            Loads plans from the cache file if available, otherwise retrieves them from the API and caches them.
+        save_plans():
+            Retrieves plan data from the Vultr API and saves it to the cache file.
+        get_all_plan():
+            Displays a menu of all available plans for user selection and sets the selected plan's ID and description.
+        get_preferred_plan():
+            Filters available plans to a predefined list of preferred options, presents them for selection, and sets the selected plan's ID and description.
+        get_region_plan():
+            Placeholder for future implementation to select plans based on region.
     """
+    plan_id = str('')
+    plan_desc = str('')
 
-    def __init__(self, api):
+    def __init__(self, api, region):
         """
         Initializes the Plan class with the provided API client, sets the cache file name, and loads available plans.
             api: An instance of the API client used for making requests.
@@ -30,6 +39,7 @@ class Plan:
         self.api = api
         self.cache_file = 'vultr_plans.json'
         self.plans = self.load_plans()
+        self.obj_region = region
 
     def load_plans(self):
         """
@@ -59,25 +69,44 @@ class Plan:
             print('Saving plans data')
             create_data_cache(self.cache_file, data)
 
-    def print_all_plans(self):
+    def get_all_plan(self):
         """
-        Prints all available plans in a formatted table.
-        This method retrieves the plans from the cache and displays them using a table format.
+        Displays a menu of available plans for selection and sets the selected plan's ID and description.
+
+        Uses the `print_input_menu` function to present the user with a list of plans and prompts for a selection.
+        Updates `self.plan_id` and `self.plan_desc` with the ID and description of the chosen plan.
+
         Returns:
             None
         """
-        print_output_table(self.plans['plans'], headers=['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'])
+        option, r_list = print_input_menu(self.plans['plans'], 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], False)
+        self.plan_id = r_list[int(option) - 1][0]
+        self.plan_desc = r_list[int(option) - 1][1]
 
     def get_preferred_plan(self):
         """
-        Returns a list of preferred plans.
-        This method provides a hardcoded list of 'preferred' plans for the user to select from.
-        Currently, the list is empty and should be populated with plan identifiers or objects
-        that represent the preferred options.
-        Returns:
-            list: A list of preferred plan identifiers or objects.
-        """
-        """List 'preferred' plans and prompt user to select one. List hardcoded."""
-        return [
+        Selects a preferred plan from a predefined list of options.
 
-        ]
+        This method filters available plans to match specific IDs ('vc2-1c-1gb', 'vc2-1c-2gb'),
+        presents them to the user via an input menu, and sets the selected plan's ID and description
+        as instance attributes.
+
+        Returns:
+            None
+
+        Side Effects:
+            Sets self.plan_id and self.plan_desc based on user selection.
+        """
+        options = ['vc2-1c-1gb', 'vc2-1c-2gb']
+        plans = []
+        for o in options:
+            for plan in self.plans['plans']:
+                if plan.get("id") == o:
+                    plans.append(plan)
+                    break
+        option, r_list = print_input_menu(plans, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], False)
+        self.plan_id = r_list[int(option) - 1][0]
+        self.plan_desc = r_list[int(option) - 1][1]
+
+    def get_region_plan(self):
+        pass

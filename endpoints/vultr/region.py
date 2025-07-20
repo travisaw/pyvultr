@@ -70,40 +70,42 @@ class Region:
             print('Saving regions data')
             create_data_cache(self.cache_file, data)
 
-    def print_all_regions(self):
-        print_output_table(self.regions['regions'], headers=['id', 'city', 'country', 'continent'])
-
-    def print_preferred_regions(self):
-        options = ['atl','ewr','ord','dfw','sjc','lhr','ams',]
-        for o in options:
-            for region in self.regions["regions"]:
-                if region.get("id") == o:
-                    print(f'{o} - {region["city"]}, {region["country"]}')
-                    break
-            else:
-                print(f'{o} - Airport code not found')
-
-    def get_preferred_region(self):
+    def get_all_region(self):
         """
-        Prompts the user to select a preferred region from a hardcoded list of options.
+        Displays a menu of available regions for selection and updates the instance's region ID and description
+        based on the user's choice.
 
-        The method displays a menu of region names and waits for user input to select one.
-        Upon selection, it sets the `region_id` and `region_desc` attributes of the instance
-        to the corresponding region's ID and name.
+        Utilizes the `print_input_menu` function to present the regions and prompt the user for input.
+        The selected region's ID and description are stored in `self.region_id` and `self.region_desc`.
 
         Returns:
             None
         """
-        options = [
-            {'id': 'atl', 'name': 'Atlanta'},
-            {'id': 'ewr', 'name': 'New York'},
-            {'id': 'ord', 'name': 'Chicago'},
-            {'id': 'dfw', 'name': 'Dallas'},
-            {'id': 'sjc', 'name': 'San Francisco'},
-            {'id': 'lhr', 'name': 'London'},
-            {'id': 'ams', 'name': 'Amsterdam'},
-        ]
-        option, r_list = print_input_menu(options, 'What region to select?: ', 'id', ['name'], False)
+        option, r_list = print_input_menu(self.regions['regions'], 'What region to select?: ', 'id', ['city', 'country', 'continent'], False)
         self.region_id = r_list[int(option) - 1][0]
         self.region_desc = r_list[int(option) - 1][1]
 
+    def get_preferred_region(self):
+        """
+        Prompts the user to select a preferred region from a predefined list of region options.
+
+        The method filters available regions based on a set of preferred region IDs, then displays
+        a menu for the user to choose a region. The selected region's ID and description are stored
+        in `self.region_id` and `self.region_desc`, respectively.
+
+        Returns:
+            None
+
+        Side Effects:
+            Updates `self.region_id` and `self.region_desc` with the selected region's information.
+        """
+        options = ['atl','ewr','ord','dfw','sjc','lhr','ams']
+        regions = []
+        for o in options:
+            for region in self.regions["regions"]:
+                if region.get("id") == o:
+                    regions.append(region)
+                    break
+        option, r_list = print_input_menu(regions, 'What region to select?: ', 'id', ['city', 'country', 'continent'], False)
+        self.region_id = r_list[int(option) - 1][0]
+        self.region_desc = r_list[int(option) - 1][1]
