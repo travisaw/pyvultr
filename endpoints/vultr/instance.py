@@ -1,4 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response_vultr, print_output_table
+from util import utc_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency
 from colorama import Fore, Style
 from colorama import init as colorama_init
 
@@ -139,7 +139,7 @@ class Instance:
                     ['Label', data['instance']['label']],
                     ['Hostname', data['instance']['hostname']],
                     ['Tags', data['instance']['tags']],
-                    ['Region', data['instance']['region']],
+                    ['Region', self.r_obj.city_from_id(data['instance']['region'])],
                     ['Date Created', utc_to_local(data['instance']['date_created'])],
                     ['Plan', data['instance']['plan']],
                     ['OS', data['instance']['os']],
@@ -163,7 +163,7 @@ class Instance:
                     # ['image_id', data['instance']['image_id']],
                     ['Features', data['instance']['features']],
                     ['User Scheme', data['instance']['user_scheme']],
-                    ['Pending Charges', data['instance']['pending_charges']],
+                    ['Pending Charges', format_currency(data['instance']['pending_charges'])],
                 ]
                 print_output_table(output)
         else:

@@ -252,3 +252,30 @@ def format_bytes(size_in_bytes):
         n += 1
 
     return f"{size_in_bytes:.2f} {units[n]}"
+
+def format_currency(value_as_number):
+    """
+    Formats a numeric value as a currency string in US dollars.
+
+    Args:
+        value_as_number (int, float, or str): The numeric value to format.
+
+    Returns:
+        str: The formatted currency string (e.g., "$ 1,234.56").
+        If the input cannot be converted to a float, returns the original input.
+
+    Examples:
+        >>> format_currency(1234.56)
+        '$ 1,234.56'
+        >>> format_currency("1000")
+        '$ 1,000.00'
+        >>> format_currency("abc")
+        'abc'
+    """
+    try:
+        # Convert to float to handle both int and float inputs
+        value_as_number = float(value_as_number)
+        # Format to 2 decimal places with commas for thousands
+        return "$ {:,.2f}".format(value_as_number)
+    except (ValueError, TypeError):
+        return value_as_number

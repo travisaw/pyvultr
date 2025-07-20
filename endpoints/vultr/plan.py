@@ -1,4 +1,4 @@
-from util import print_input_menu, valid_response_vultr, print_output_table
+from util import print_input_menu, valid_response_vultr, print_output_table, format_currency
 from data import create_data_cache, load_data_cache
 
 class Plan:
@@ -104,7 +104,7 @@ class Plan:
                     ['Disk Count', sel_plan['disk_count']],
                     ['Disk Type', sel_plan['disk_type']],
                     ['Bandwidth', sel_plan['bandwidth']],
-                    ['Monthly Cost', sel_plan['monthly_cost']],
+                    ['Monthly Cost', format_currency(sel_plan['monthly_cost'])],
                     ['Type', sel_plan['type']],
                     ['CPU Vendor', sel_plan['cpu_vendor']],
                     ['Storage Type', sel_plan['storage_type']],

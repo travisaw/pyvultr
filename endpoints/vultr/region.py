@@ -124,7 +124,20 @@ class Region:
         self.region_id = r_list[int(option) - 1][0]
         self.region_desc = r_list[int(option) - 1][1]
 
+    def city_from_id(selct, region_id):
+        for region in selct.regions['regions']:
+            if region['id'] == region_id:
+                return region['city']
+        return region_id
+
     def region_selected(self):
+        """
+        Checks if a region has been selected.
+
+        Returns:
+            bool: True if `region_id` is not an empty string, False otherwise.
+                  Prints a message if no region is selected.
+        """
         if self.region_id != '':
             return True
         else:
