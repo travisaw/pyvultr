@@ -187,12 +187,13 @@ class Instance:
         """
         label = input('Hostname/Label?:')
         self.r_obj.get_preferred_region()
+        self.p_obj.select_preferred_region_plans()
         tags = ['pyvultr']
         self.fw_obj.get_firewalls()
         self.ss_obj.get_snapshots()
         body = {
             "region": self.r_obj.region_id,
-            "plan": "vc2-1c-1gb",
+            "plan": self.p_obj.plan_id,
             "label": label,
             "hostname": label,
             "tags": tags,

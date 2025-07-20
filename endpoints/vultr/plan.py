@@ -81,6 +81,15 @@ class Plan:
             create_data_cache(self.cache_file, data)
 
     def get_preferred_plans(self):
+        """
+        Filters and stores the plans whose IDs are listed in `self.preferred_plan_ids`.
+
+        Iterates through the list of preferred plan IDs and searches for matching plans in `self.plans['plans']`.
+        Each matching plan is appended to `self.preferred_plans`.
+
+        Returns:
+            None
+        """
         self.preferred_plans = []
         for o in self.preferred_plan_ids:
             for plan in self.plans['plans']:
@@ -89,6 +98,17 @@ class Plan:
                     break
 
     def get_region_plans(self):
+        """
+        Filters and stores plans available for the currently selected region.
+
+        Iterates through all available plans and checks if the selected region's ID
+        is present in each plan's 'locations'. If so, the plan is added to the
+        'region_plans' list. Returns True if a region is selected and plans are filtered,
+        otherwise returns False.
+
+        Returns:
+            bool: True if a region is selected and plans are filtered, False otherwise.
+        """
         if self.obj_region.region_selected():
             self.region_plans = []
             for plan in self.plans['plans']:
@@ -99,23 +119,84 @@ class Plan:
             return False
         
     def get_preferred_region_plans(self):
-        pass
+        """
+        Filters and stores plans available in the currently selected region that match preferred plan IDs.
+
+        Returns:
+            bool: True if a region is selected and preferred region plans are updated, False otherwise.
+
+        Side Effects:
+            Updates self.preferred_region_plans with plans that are available in the selected region and whose IDs are in self.preferred_plan_ids.
+        """
+        if self.obj_region.region_selected():
+            self.preferred_region_plans = []
+            for plan in self.plans['plans']:
+                if self.obj_region.region_id in plan.get('locations') and plan.get('id') in self.preferred_plan_ids:
+                    self.preferred_region_plans.append(plan)
+            return True
+        else:
+            return False
 
     def select_all_plans(self):
-        option, r_list = print_input_menu(self.plans['plans'], 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], True)
-        self.plan_id = r_list[int(option) - 1][0]
-        self.plan_desc = r_list[int(option) - 1][1]
+        """
+        Displays all available plans by printing the list of plans.
+
+        This method retrieves the 'plans' from the instance's `plans` attribute and
+        passes them to the internal `__print_plans` method for display.
+
+        Returns:
+            None
+        """
+        self.__print_plans(self.plans['plans'])
 
     def select_preferred_plans(self):
-        option, r_list = print_input_menu(self.preferred_plans, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], True)
-        self.plan_id = r_list[int(option) - 1][0]
-        self.plan_desc = r_list[int(option) - 1][1]
+        """
+        Displays the list of preferred plans by printing them.
+
+        This method calls the internal __print_plans function with the preferred_plans attribute,
+        which outputs the available preferred plans to the console.
+
+        Returns:
+            None
+        """
+        self.__print_plans(self.preferred_plans)
 
     def select_region_plans(self):
+        """
+        Displays the available plans for the selected region.
+
+        This method checks if there are any plans available for the current region
+        by calling `get_region_plans()`. If plans are available, it prints them
+        using the `__print_plans` method.
+
+        Returns:
+            None
+        """
         if self.get_region_plans():
-            option, r_list = print_input_menu(self.region_plans, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], True)
-            self.plan_id = r_list[int(option) - 1][0]
-            self.plan_desc = r_list[int(option) - 1][1]
+            self.__print_plans(self.region_plans)
 
     def select_preferred_region_plans(self):
-        pass
+        """
+        Selects and prints the plans available in the preferred region.
+
+        This method checks if there are any preferred region plans available by calling
+        `get_preferred_region_plans()`. If plans are found, it prints them using the
+        `__print_plans` method.
+
+        Returns:
+            None
+        """
+        if self.get_preferred_region_plans():
+            self.__print_plans(self.preferred_region_plans)
+
+    def __print_plans(self, plan_set):
+        """
+        Prints all available plans in a formatted table.
+
+        Utilizes the `print_output_table` function to display the plans stored in `self.plans['plans']`.
+        Returns:
+            None
+        """
+        option, r_list = print_input_menu(plan_set, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], True)
+        self.plan_id = r_list[int(option) - 1][0]
+        self.plan_desc = r_list[int(option) - 1][1]
