@@ -99,7 +99,7 @@ class Region:
         Side Effects:
             Updates `self.region_id` and `self.region_desc` with the selected region's information.
         """
-        options = ['atl','ewr','ord','dfw','sjc','lhr','ams']
+        options = ['atl','ewr','ord','dfw','sjc','lhr','ams','sao']
         regions = []
         for o in options:
             for region in self.regions["regions"]:
@@ -109,3 +109,10 @@ class Region:
         option, r_list = print_input_menu(regions, 'What region to select?: ', 'id', ['city', 'country', 'continent'], False)
         self.region_id = r_list[int(option) - 1][0]
         self.region_desc = r_list[int(option) - 1][1]
+
+    def region_selected(self):
+        if self.region_id != '':
+            return True
+        else:
+            print('No Region Selected!')
+            return False

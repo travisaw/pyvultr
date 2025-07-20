@@ -26,6 +26,11 @@ class Plan:
     """
     plan_id = str('')
     plan_desc = str('')
+    preferred_plan_ids = ['vc2-1c-1gb', 'vc2-1c-2gb', 'vc2-1c-0.5gb-v6']
+    plans = {}
+    preferred_plans = []
+    region_plans = []
+    preferred_region_plans = []
 
     def __init__(self, api, region):
         """
@@ -37,23 +42,29 @@ class Plan:
             plans: A list of plans loaded from the cache or API.
         """
         self.api = api
-        self.cache_file = 'vultr_plans.json'
-        self.plans = self.load_plans()
         self.obj_region = region
+        self.cache_file = 'vultr_plans.json'
+        self.load_plans()
+        self.get_preferred_plans()
 
     def load_plans(self):
         """
-        Loads plans from the cache file if it exists, otherwise retrieves them from the API.
+        Loads plan data from the cache file into the `self.plans` attribute.
 
-        Returns:
-            A list of plans loaded from the cache or API.
+        If the cache file does not exist or contains no data, retrieves the plans from the API,
+        saves them to the cache, and reloads the plans from the cache file.
+
+        Side Effects:
+            - Updates `self.plans` with the loaded or retrieved plan data.
+            - May print a message if no cached plans are found.
+            - May call `self.save_plans()` to fetch and cache plans from the API.
         """
-        data = load_data_cache(self.cache_file)
-        if data is None:
+        self.plans = {}
+        self.plans = load_data_cache(self.cache_file)
+        if self.plans is None:
             print('No cached plans found, retrieving from API.')
             self.save_plans()
-            data = load_data_cache(self.cache_file)
-        return data
+            self.plans = load_data_cache(self.cache_file)
 
     def save_plans(self):
         """
@@ -69,44 +80,42 @@ class Plan:
             print('Saving plans data')
             create_data_cache(self.cache_file, data)
 
-    def get_all_plan(self):
-        """
-        Displays a menu of available plans for selection and sets the selected plan's ID and description.
-
-        Uses the `print_input_menu` function to present the user with a list of plans and prompts for a selection.
-        Updates `self.plan_id` and `self.plan_desc` with the ID and description of the chosen plan.
-
-        Returns:
-            None
-        """
-        option, r_list = print_input_menu(self.plans['plans'], 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], False)
-        self.plan_id = r_list[int(option) - 1][0]
-        self.plan_desc = r_list[int(option) - 1][1]
-
-    def get_preferred_plan(self):
-        """
-        Selects a preferred plan from a predefined list of options.
-
-        This method filters available plans to match specific IDs ('vc2-1c-1gb', 'vc2-1c-2gb'),
-        presents them to the user via an input menu, and sets the selected plan's ID and description
-        as instance attributes.
-
-        Returns:
-            None
-
-        Side Effects:
-            Sets self.plan_id and self.plan_desc based on user selection.
-        """
-        options = ['vc2-1c-1gb', 'vc2-1c-2gb']
-        plans = []
-        for o in options:
+    def get_preferred_plans(self):
+        self.preferred_plans = []
+        for o in self.preferred_plan_ids:
             for plan in self.plans['plans']:
                 if plan.get("id") == o:
-                    plans.append(plan)
+                    self.preferred_plans.append(plan)
                     break
-        option, r_list = print_input_menu(plans, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], False)
+
+    def get_region_plans(self):
+        if self.obj_region.region_selected():
+            self.region_plans = []
+            for plan in self.plans['plans']:
+                if self.obj_region.region_id in plan.get('locations'):
+                    self.region_plans.append(plan)
+            return True
+        else:
+            return False
+        
+    def get_preferred_region_plans(self):
+        pass
+
+    def select_all_plans(self):
+        option, r_list = print_input_menu(self.plans['plans'], 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], True)
         self.plan_id = r_list[int(option) - 1][0]
         self.plan_desc = r_list[int(option) - 1][1]
 
-    def get_region_plan(self):
+    def select_preferred_plans(self):
+        option, r_list = print_input_menu(self.preferred_plans, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], True)
+        self.plan_id = r_list[int(option) - 1][0]
+        self.plan_desc = r_list[int(option) - 1][1]
+
+    def select_region_plans(self):
+        if self.get_region_plans():
+            option, r_list = print_input_menu(self.region_plans, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], True)
+            self.plan_id = r_list[int(option) - 1][0]
+            self.plan_desc = r_list[int(option) - 1][1]
+
+    def select_preferred_region_plans(self):
         pass

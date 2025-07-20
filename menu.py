@@ -81,8 +81,8 @@ class Menu():
             {'id': 2, 'name': 'Instances'},
             {'id': 3, 'name': 'Firewall'},
             {'id': 4, 'name': 'Snapshot'},
-            {'id': 5, 'name': 'Compute Plans'},
-            {'id': 6, 'name': 'Compute Regions'},
+            {'id': 5, 'name': 'Compute Regions'},
+            {'id': 6, 'name': 'Compute Plans'},
             {'id': 7, 'name': 'DNS Zones'},
             {'id': 8, 'name': 'Other'},
             {'id': 9, 'name': 'Exit'},
@@ -98,9 +98,9 @@ class Menu():
             case '4':
                 self.snapshot()
             case '5':
-                self.plans()
-            case '6':
                 self.regions()
+            case '6':
+                self.plans()
             case '7':
                 self.dns_zone()
             case '8':
@@ -314,7 +314,8 @@ class Menu():
             {'id': 3, 'name': 'Select From All Plans'},
             {'id': 4, 'name': 'Select From Preferred Plans'},
             {'id': 5, 'name': 'Select From Region Plans'},
-            {'id': 6, 'name': 'Go Back'},
+            {'id': 6, 'name': 'Select From Regions Preferred Plans'},
+            {'id': 7, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
@@ -322,18 +323,21 @@ class Menu():
                 self.obj_p.save_plans()
                 self.plans()
             case '2':
-                self.obj_p.print_plan()
+                # self.obj_p.print_plan() # Not yet implemented
                 self.plans()
             case '3':
-                self.obj_p.get_all_plan()
-                self.main_menu()
+                self.obj_p.select_all_plans()
+                self.plans()
             case '4':
-                self.obj_p.get_preferred_plan()
-                self.main_menu()
+                self.obj_p.select_preferred_plans()
+                self.plans()
             case '5':
-                self.obj_p.get_preferred_plan()
-                self.main_menu()
+                self.obj_p.select_region_plans()
+                self.plans()
             case '6':
+                self.obj_p.select_preferred_region_plans()
+                self.plans()
+            case '7':
                 self.main_menu()
 
     def regions(self):
