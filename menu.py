@@ -323,7 +323,7 @@ class Menu():
                 self.obj_p.save_plans()
                 self.plans()
             case '2':
-                # self.obj_p.print_plan() # Not yet implemented
+                self.obj_p.print_plan()
                 self.plans()
             case '3':
                 self.obj_p.select_all_plans()
@@ -364,14 +364,14 @@ class Menu():
                 self.obj_r.save_regions()
                 self.regions()
             case '2':
-                self.obj_r.get_preferred_region()
+                self.obj_r.print_region()
                 self.regions()
             case '3':
                 self.obj_r.get_all_region()
-                self.main_menu()
+                self.regions()
             case '4':
                 self.obj_r.get_preferred_region()
-                self.main_menu()
+                self.regions()
             case '5':
                 self.main_menu()
 

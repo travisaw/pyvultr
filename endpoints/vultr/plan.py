@@ -80,6 +80,37 @@ class Plan:
             print('Saving plans data')
             create_data_cache(self.cache_file, data)
 
+    def print_plan(self):
+        """
+        Prints the details of the currently selected plan in a formatted table.
+
+        The method checks if a plan is selected, retrieves the selected plan's details,
+        and displays its attributes such as ID, vCPU count and type, RAM, disk information,
+        bandwidth, monthly cost, type, CPU vendor, and storage type in a tabular format.
+
+        Returns:
+            None
+        """
+        if self.__plan_selected():
+            sel_plan = next((plan for plan in self.plans['plans'] if plan['id'] == self.plan_id), None)
+            if sel_plan:
+                print(sel_plan)
+                result = [
+                    ['ID', sel_plan['id']],
+                    ['vCPU Count', sel_plan['vcpu_count']],
+                    ['vCPU Type', sel_plan['vcpu_type']],
+                    ['RAM', sel_plan['ram']],
+                    ['Disk', sel_plan['disk']],
+                    ['Disk Count', sel_plan['disk_count']],
+                    ['Disk Type', sel_plan['disk_type']],
+                    ['Bandwidth', sel_plan['bandwidth']],
+                    ['Monthly Cost', sel_plan['monthly_cost']],
+                    ['Type', sel_plan['type']],
+                    ['CPU Vendor', sel_plan['cpu_vendor']],
+                    ['Storage Type', sel_plan['storage_type']],
+                ]
+                print_output_table(result)
+
     def get_preferred_plans(self):
         """
         Filters and stores the plans whose IDs are listed in `self.preferred_plan_ids`.
@@ -200,3 +231,17 @@ class Plan:
         option, r_list = print_input_menu(plan_set, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], True)
         self.plan_id = r_list[int(option) - 1][0]
         self.plan_desc = r_list[int(option) - 1][1]
+
+    def __plan_selected(self):
+        """
+        Checks if a plan has been selected by verifying that `plan_id` is not an empty string.
+
+        Returns:
+            bool: True if a plan is selected (`plan_id` is not empty), False otherwise.
+            Prints a message if no plan is selected.
+        """
+        if self.plan_id != '':
+            return True
+        else:
+            print('No Plan Selected!')
+            return False

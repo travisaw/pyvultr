@@ -1,4 +1,4 @@
-from util import print_input_menu, valid_response_vultr, print_output_table
+from util import print_input_menu, valid_response_vultr, print_output_table, utc_to_local
 from data import create_data_cache, load_data_cache
 
 class Region:
@@ -69,6 +69,20 @@ class Region:
         if valid_response_vultr(data):
             print('Saving regions data')
             create_data_cache(self.cache_file, data)
+
+    def print_region(self):
+        if self.region_selected():
+            sel_region = next((region for region in self.regions['regions'] if region['id'] == self.region_id), None)
+            if sel_region:
+                print(sel_region)
+                data = [
+                    ['ID', sel_region['id']],
+                    ['City', sel_region['city']],
+                    ['Country', sel_region['country']],
+                    ['Continent', sel_region['continent']],
+                    ['Options', sel_region['options']],
+                ]
+                print_output_table(data)
 
     def get_all_region(self):
         """
