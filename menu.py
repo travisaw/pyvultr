@@ -2,6 +2,7 @@
 from endpoints.vultr.account import get_account_info
 from endpoints.vultr.instance import Instance
 from endpoints.vultr.firewall import Firewall
+from endpoints.vultr.operatingsystem import OperatingSystem
 from endpoints.vultr.plan import Plan
 from endpoints.vultr.region import Region
 from endpoints.vultr.snapshot import Snapshot
@@ -66,8 +67,9 @@ class Menu():
         self.obj_r = Region(self.vultr_api)      # Vultr Region Object
         self.obj_p = Plan(self.vultr_api, self.obj_r)        # Vultr Compute Plan Object
         self.obj_ss = Snapshot(self.vultr_api)   # Vultr Snapshot Object
+        self.obj_os = OperatingSystem(self.vultr_api)        # Initialize OperatingSystem Object
         self.obj_cf = Zone(self.cloudflare_api)  # Cloudflare Zone Object
-        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r) # Vultr Compute Instance Object
+        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r, self.obj_os) # Vultr Compute Instance Object
 
     def main_menu(self):
         """
@@ -295,6 +297,41 @@ class Menu():
             case '6':
                 self.main_menu()
 
+    def regions(self):
+        """
+        Displays a menu for region-related actions and handles user selection.
+        The menu provides the following options:
+            1. Save Compute Regions: Saves the current compute regions using obj_r.save_regions().
+            2. Show Selected Compute Region: Displays the preferred compute region using obj_r.get_preferred_region().
+            3. Print All Regions: Prints all available regions using obj_r.print_all_regions().
+            4. Print Preferred Regions: Prints the preferred regions using obj_r.print_preferred_regions().
+            5. Go Back: Returns to the main menu.
+        After performing the selected action, the method either redisplays the regions menu or returns to the main menu.
+        """
+        options = [
+            {'id': 1, 'name': 'Save Compute Regions'},
+            {'id': 2, 'name': 'Show Selected Compute Region'},
+            {'id': 3, 'name': 'Select From All Regions'},
+            {'id': 4, 'name': 'Select From Preferred Regions'},
+            {'id': 5, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
+        match option:
+            case '1':
+                self.obj_r.save_regions()
+                self.regions()
+            case '2':
+                self.obj_r.print_region()
+                self.regions()
+            case '3':
+                self.obj_r.get_all_region()
+                self.regions()
+            case '4':
+                self.obj_r.get_preferred_region()
+                self.regions()
+            case '5':
+                self.main_menu()
+
     def plans(self):
         """
         Displays the Vultr Compute Plans Menu and handles user interactions for managing compute plans.
@@ -338,41 +375,6 @@ class Menu():
                 self.obj_p.select_preferred_region_plans()
                 self.plans()
             case '7':
-                self.main_menu()
-
-    def regions(self):
-        """
-        Displays a menu for region-related actions and handles user selection.
-        The menu provides the following options:
-            1. Save Compute Regions: Saves the current compute regions using obj_r.save_regions().
-            2. Show Selected Compute Region: Displays the preferred compute region using obj_r.get_preferred_region().
-            3. Print All Regions: Prints all available regions using obj_r.print_all_regions().
-            4. Print Preferred Regions: Prints the preferred regions using obj_r.print_preferred_regions().
-            5. Go Back: Returns to the main menu.
-        After performing the selected action, the method either redisplays the regions menu or returns to the main menu.
-        """
-        options = [
-            {'id': 1, 'name': 'Save Compute Regions'},
-            {'id': 2, 'name': 'Show Selected Compute Region'},
-            {'id': 3, 'name': 'Select From All Regions'},
-            {'id': 4, 'name': 'Select From Preferred Regions'},
-            {'id': 5, 'name': 'Go Back'},
-        ]
-        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
-        match option:
-            case '1':
-                self.obj_r.save_regions()
-                self.regions()
-            case '2':
-                self.obj_r.print_region()
-                self.regions()
-            case '3':
-                self.obj_r.get_all_region()
-                self.regions()
-            case '4':
-                self.obj_r.get_preferred_region()
-                self.regions()
-            case '5':
                 self.main_menu()
 
     def dns_zone(self):

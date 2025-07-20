@@ -53,17 +53,18 @@ class Instance:
     instance_ip4 = ''
     instance_ip6 = ''
 
-    def __init__(self, api, fw_obj, ss_obj, cf_obj, p_obj, r_obj):
+    def __init__(self, api, fw_obj, ss_obj, cf_obj, p_obj, r_obj, os_obj):
         """
-        Initializes the instance with the provided API and related objects.
+        Initializes the instance with required API and object dependencies.
 
         Args:
             api: The API client or interface used for making requests.
-            fw_obj: The firewall object for managing firewall rules.
-            ss_obj: The snapshot object for handling instance snapshots.
-            cf_obj: The configuration object for instance configurations.
-            p_obj: The plan object for instance plans.
-            r_obj: The region object for instance regions.
+            fw_obj: Firewall object for managing firewall configurations.
+            ss_obj: Snapshot object for handling instance snapshots.
+            cf_obj: Configuration object for instance settings.
+            p_obj: Plan object representing instance plans.
+            r_obj: Region object specifying instance regions.
+            os_obj: Operating system object for managing OS-related operations.
         """
         self.api = api
         self.fw_obj = fw_obj
@@ -71,6 +72,7 @@ class Instance:
         self.cf_obj = cf_obj
         self.p_obj = p_obj
         self.r_obj = r_obj
+        self.os_obj = os_obj
         colorama_init(autoreset=True)
 
     def get_instances(self):
