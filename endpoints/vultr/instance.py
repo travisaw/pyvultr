@@ -1,5 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response_vultr
-from tabulate import tabulate
+from util import utc_to_local, print_input_menu, valid_response_vultr, print_output_table
 from colorama import Fore, Style
 from colorama import init as colorama_init
 
@@ -136,7 +135,7 @@ class Instance:
             if valid_response_vultr(data):
                 self.fw_obj.firewall_id = data['instance']['firewall_group_id']
                 self.fw_obj.get_firewall()
-                print(tabulate([
+                output = [
                     ['Label', data['instance']['label']],
                     ['Hostname', data['instance']['hostname']],
                     ['Tags', data['instance']['tags']],
@@ -165,7 +164,8 @@ class Instance:
                     ['Features', data['instance']['features']],
                     ['User Scheme', data['instance']['user_scheme']],
                     ['Pending Charges', data['instance']['pending_charges']],
-                ]))
+                ]
+                print_output_table(output)
         else:
             print('No Instance Selected!')
 

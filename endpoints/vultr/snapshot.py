@@ -1,5 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response_vultr, format_bytes
-from tabulate import tabulate
+from util import utc_to_local, print_input_menu, valid_response_vultr, format_bytes, print_output_table
 from colorama import Fore, Style
 from colorama import init as colorama_init
 
@@ -73,14 +72,15 @@ class Snapshot:
             url = f'snapshots/{self.snapshot_id}'
             data = self.api.api_get(url)
             if valid_response_vultr(data):
-                print(tabulate([
+                result = [
                     # ['id', data['snapshot']['id']],
                     ['date_created', utc_to_local(data['snapshot']['date_created'])],
                     ['description', data['snapshot']['description']],
                     ['size', format_bytes(data['snapshot']['size'])],
                     ['compressed_size', format_bytes(data['snapshot']['compressed_size'])],
                     ['status', self.__snapshot_status_color(data['snapshot']['status'])],
-                ]))
+                ]
+                print_output_table(result)
         else:
             print('No Snapshot Selected!')
 

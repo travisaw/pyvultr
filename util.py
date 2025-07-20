@@ -124,11 +124,12 @@ def print_output_table(data, headers=None):
         return
     
     if headers is None:
-        headers = list(data[0].keys())
-    
-    table_data = [[row.get(header, '') for header in headers] for row in data]
-    # print(tabulate(table_data, headers=headers, tablefmt='grid'))
-    print(tabulate(table_data, headers=headers))
+        # headers = list(data[0].keys())
+        print(tabulate(data))
+    else:
+        table_data = [[row.get(header, '') for header in headers] for row in data]
+        # print(tabulate(table_data, headers=headers, tablefmt='grid'))
+        print(tabulate(table_data, headers=headers))
 
 def valid_option(option, options, base_value):
     """

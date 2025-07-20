@@ -1,5 +1,4 @@
-from util import utc_to_local
-from tabulate import tabulate
+from util import utc_to_local, print_output_table
 
 def get_account_info(api):
     """
@@ -25,4 +24,4 @@ def get_account_info(api):
         ['Last Payment Date: ', utc_to_local(data['account']['last_payment_date'])],
         ['Last Payment Amount: ', data['account']['last_payment_amount']]
     ]
-    print(tabulate(result))
+    print_output_table(result)

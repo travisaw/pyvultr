@@ -1,5 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response_vultr, ip6_network_prefix
-from tabulate import tabulate
+from util import utc_to_local, print_input_menu, valid_response_vultr, ip6_network_prefix, print_output_table
 
 class Firewall:
     """
@@ -117,7 +116,7 @@ class Firewall:
                     ['Rule Count: ', data['firewall_group']['rule_count']],
                     ['Max Rule Count: ', data['firewall_group']['max_rule_count']]
                 ]
-                print(tabulate(result))
+                print_output_table(result)
 
     def create_firewall_prompt(self):
         """
