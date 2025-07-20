@@ -2,7 +2,7 @@
 from endpoints.vultr.account import get_account_info
 from endpoints.vultr.instance import Instance
 from endpoints.vultr.firewall import Firewall
-from endpoints.vultr.operatingsystem import OperatingSystem
+from endpoints.vultr.os import OS
 from endpoints.vultr.plan import Plan
 from endpoints.vultr.region import Region
 from endpoints.vultr.snapshot import Snapshot
@@ -67,7 +67,7 @@ class Menu():
         self.obj_r = Region(self.vultr_api)      # Vultr Region Object
         self.obj_p = Plan(self.vultr_api, self.obj_r)        # Vultr Compute Plan Object
         self.obj_ss = Snapshot(self.vultr_api)   # Vultr Snapshot Object
-        self.obj_os = OperatingSystem(self.vultr_api)        # Initialize OperatingSystem Object
+        self.obj_os = OS(self.vultr_api)        # Initialize OperatingSystem Object
         self.obj_cf = Zone(self.cloudflare_api)  # Cloudflare Zone Object
         self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r, self.obj_os) # Vultr Compute Instance Object
 
