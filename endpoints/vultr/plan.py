@@ -1,5 +1,6 @@
 from util import print_input_menu, valid_response_vultr, print_output_table, format_currency
 from data import create_data_cache, load_data_cache
+import settings
 
 class Plan:
     """
@@ -26,7 +27,7 @@ class Plan:
     """
     plan_id = str('')
     plan_desc = str('')
-    preferred_plan_ids = ['vc2-1c-1gb', 'vc2-1c-2gb', 'vc2-1c-0.5gb-v6']
+    preferred_plan_ids = settings.PREFERRED_PLAN_IDS
     plans = {}
     preferred_plans = []
     region_plans = []

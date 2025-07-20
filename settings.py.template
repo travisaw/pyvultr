@@ -1,0 +1,18 @@
+
+# Settings file
+
+PREFERRED_PLAN_IDS = [
+    '<plan_1>',
+    '<plan_2>',
+]
+PREFERRED_PLAN_ONLY = True
+
+PREFERRED_REGION_IDS = [
+    '<region_1>',
+    '<region_2>',
+]
+PREFERRED_REGION_ONLY = True
+
+CLOUD_INIT_PROFILE = [
+    {'name': 'name', 'description': 'Ddescription', 'URL': 'https://mysite.com/default.yaml'},
+]

@@ -1,5 +1,6 @@
 from util import print_input_menu, valid_response_vultr, print_output_table, utc_to_local
 from data import create_data_cache, load_data_cache
+import settings
 
 class Region:
     """
@@ -22,6 +23,7 @@ class Region:
     """
     region_id = str('')
     region_desc = str('')
+    preferred_region_ids = settings.PREFERRED_REGION_IDS
 
     def __init__(self, api):
         """
@@ -101,21 +103,15 @@ class Region:
 
     def get_preferred_region(self):
         """
-        Prompts the user to select a preferred region from a predefined list of region options.
-
-        The method filters available regions based on a set of preferred region IDs, then displays
-        a menu for the user to choose a region. The selected region's ID and description are stored
-        in `self.region_id` and `self.region_desc`, respectively.
-
+        Prompts the user to select a preferred region from a list of region IDs.
+        Iterates through the preferred region IDs and matches them with available regions.
+        Displays a menu for the user to choose a region, showing details such as city, country, and continent.
+        Sets the selected region's ID and description as instance attributes.
         Returns:
             None
-
-        Side Effects:
-            Updates `self.region_id` and `self.region_desc` with the selected region's information.
         """
-        options = ['atl','ewr','ord','dfw','sjc','lhr','ams','sao']
         regions = []
-        for o in options:
+        for o in self.preferred_region_ids:
             for region in self.regions["regions"]:
                 if region.get("id") == o:
                     regions.append(region)

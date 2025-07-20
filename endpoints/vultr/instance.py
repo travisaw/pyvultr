@@ -1,6 +1,7 @@
 from util import utc_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency
 from colorama import Fore, Style
 from colorama import init as colorama_init
+import settings
 
 class Instance:
     """
@@ -186,8 +187,19 @@ class Instance:
             - Initiates the creation of a new instance using the collected information.
         """
         label = input('Hostname/Label?:')
-        self.r_obj.get_preferred_region()
-        self.p_obj.select_preferred_region_plans()
+
+        if settings.PREFERRED_REGION_ONLY:
+            self.r_obj.get_preferred_region()
+        else:
+            self.r_obj.get_all_region()
+        
+        if settings.PREFERRED_PLAN_ONLY:
+            print('Using preferred plans only.')
+            self.p_obj.select_preferred_region_plans()
+        else:
+            print('Using all plans.')
+            self.p_obj.select_region_plans()
+        
         tags = ['pyvultr']
         self.fw_obj.get_firewalls()
         self.ss_obj.get_snapshots()
