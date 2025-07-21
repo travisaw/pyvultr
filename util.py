@@ -32,7 +32,15 @@ def utc_to_local(utc_string):
     return local_dt_string
 
 def hour_minutee_day_diff(utc_string):
-    
+    """
+    Calculates the difference between the current UTC time and a given UTC datetime string,
+    returning a human-readable string representing the number of days, hours, and minutes.
+    Args:
+        utc_string (str): A string representing a UTC datetime.
+    Returns:
+        str: A string describing the time difference in days, hours, and minutes,
+             or "Less than a minute" if the difference is less than one minute.
+    """ 
     utc_now = datetime.now(pytz.UTC)
     utc_dt = get_utc_dt(utc_string)
 
@@ -52,6 +60,17 @@ def hour_minutee_day_diff(utc_string):
     return ", ".join(parts) if parts else "Less than a minute"
 
 def get_utc_dt(utc_string):
+    """
+    Converts a UTC datetime string to a timezone-aware datetime object.
+    Args:
+        utc_string (str): The UTC datetime string to convert.
+    Returns:
+        datetime: A timezone-aware datetime object in UTC.
+    Raises:
+        ValueError: If the utc_string does not match the detected format.
+    Note:
+        The function relies on `detect_datetime_format` to determine the format of the input string.
+    """
     utc_format = detect_datetime_format(utc_string)
 
     # Parse the UTC string into a datetime object
