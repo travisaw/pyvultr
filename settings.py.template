@@ -1,6 +1,8 @@
 
 # Settings file
 
+PRINT_TIMESTAMP = True # Whether to print the current timestamp with each menu
+
 PREFERRED_PLAN_IDS = [
     '<plan_1>',
     '<plan_2>',

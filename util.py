@@ -3,6 +3,7 @@ import pytz
 import tzlocal
 import ipaddress
 from tabulate import tabulate
+import settings
 
 def utc_str_to_local(utc_string):
     """
@@ -176,6 +177,8 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
             print_list.append(print_row)
             inst_count += 1
         print(tabulate(print_list)) # Print menu output
+        if settings.PRINT_TIMESTAMP:
+            print(f"{utc_to_local(get_utc_now())}")
         try:
             option = input(prompt)
             if not valid_option(option, out_list, base_value):
