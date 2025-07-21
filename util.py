@@ -179,9 +179,9 @@ def print_output_table(data, headers=None):
         # headers = list(data[0].keys())
         print(tabulate(data))
     else:
-        table_data = [[row.get(header, '') for header in headers] for row in data]
+        # table_data = [[row.get(header, '') for header in headers] for row in data]
         # print(tabulate(table_data, headers=headers, tablefmt='grid'))
-        print(tabulate(table_data, headers=headers))
+        print(tabulate(data, headers=headers))
 
 def valid_option(option, options, base_value):
     """
