@@ -85,9 +85,10 @@ class Menu():
             {'id': 4, 'name': 'Snapshot'},
             {'id': 5, 'name': 'Compute Regions'},
             {'id': 6, 'name': 'Compute Plans'},
-            {'id': 7, 'name': 'DNS Zones'},
-            {'id': 8, 'name': 'Other'},
-            {'id': 9, 'name': 'Exit'},
+            {'id': 7, 'name': 'Operating Systems'},
+            {'id': 8, 'name': 'DNS Zones'},
+            {'id': 9, 'name': 'Other'},
+            {'id': 10, 'name': 'Exit'},
         ]
         option, inst_list = print_input_menu(options, 'What area?: ', 'id', ['name'], False)
         match option:
@@ -104,10 +105,12 @@ class Menu():
             case '6':
                 self.plans()
             case '7':
-                self.dns_zone()
+                self.os()
             case '8':
-                self.other()
+                self.dns_zone()
             case '9':
+                self.other()
+            case '10':
                 exit()
 
     def account(self):
@@ -375,6 +378,31 @@ class Menu():
                 self.obj_p.select_preferred_region_plans()
                 self.plans()
             case '7':
+                self.main_menu()
+
+    def os(self):
+        options = [
+            {'id': 1, 'name': 'Save OS'},
+            {'id': 2, 'name': 'Show Selected OS'},
+            {'id': 3, 'name': 'Select From All OS'},
+            {'id': 4, 'name': 'Select From Preferred OS'},
+            {'id': 5, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
+        match option:
+            case '1':
+                self.obj_os.save_os()
+                self.os()
+            case '2':
+                self.obj_os.print_os()
+                self.os()
+            case '3':
+                self.obj_os.get_all_os()
+                self.os()
+            case '4':
+                self.obj_os.get_preferred_os()
+                self.os()
+            case '5':
                 self.main_menu()
 
     def dns_zone(self):

@@ -188,8 +188,10 @@ class Instance:
             - Calls methods to fetch preferred region, firewalls, and snapshots.
             - Initiates the creation of a new instance using the collected information.
         """
+        # Prompt for hostname/label
         label = input('Hostname/Label?:')
 
+        # Select region and plans
         if settings.PREFERRED_REGION_ONLY:
             self.r_obj.get_preferred_region()
         else:
@@ -197,25 +199,47 @@ class Instance:
         
         if settings.PREFERRED_PLAN_ONLY:
             print('Using preferred plans only.')
-            self.p_obj.select_preferred_region_plans()
+            self.p_obj.select_preferred_region_plans(False)
         else:
             print('Using all plans.')
-            self.p_obj.select_region_plans()
-        
-        tags = ['pyvultr']
-        self.fw_obj.get_firewalls()
-        self.ss_obj.get_snapshots()
+            self.p_obj.select_region_plans(False)
+
         body = {
             "region": self.r_obj.region_id,
             "plan": self.p_obj.plan_id,
             "label": label,
             "hostname": label,
-            "tags": tags,
-            "firewall_group_id": self.fw_obj.firewall_id,
-            "snapshot_id": self.ss_obj.snapshot_id,
+            "tags": settings.INSTANCE_TAGS,
             "enable_private_network": "false",
             "enable_ipv6": "false",
         }
+
+        # Select Firewall
+        self.fw_obj.get_firewalls()
+        if self.fw_obj.firewall_selected():
+            body['firewall_group_id'] = self.fw_obj.firewall_id
+
+        # Select OS Source
+        os_source = [
+            {'id': '1', 'name': 'Snapshot'},
+            {'id': '2', 'name': 'Blank OS'},
+        ]
+        option, r_list = print_input_menu(os_source, 'What OS to use?: ', 'id', ['name'], False)
+        match r_list[int(option) - 1][0]:
+            case '1':
+                self.ss_obj.get_snapshots()
+                body['snapshot_id'] = self.ss_obj.snapshot_id
+            case '2':
+                if settings.PREFERRED_OS_ONLY:
+                    self.os_obj.get_preferred_os()
+                else:
+                    self.os_obj.get_all_os()
+                body['os_id'] = self.os_obj.os_id
+
+        # Send activation email if enabled
+        if settings.EMAIL_INSTANCE_CREATION:
+            body['activation_email'] = "true"
+
         self.create_instance(body)
 
     def create_instance(self, body):

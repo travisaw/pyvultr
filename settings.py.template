@@ -13,6 +13,15 @@ PREFERRED_REGION_IDS = [
 ]
 PREFERRED_REGION_ONLY = True
 
+PREFERRED_OS_IDS = [
+    1234,
+]
+PREFERRED_OS_ONLY = True
+
+INSTANCE_TAGS = ['pyvultr']
+
+EMAIL_INSTANCE_CREATION = True
+
 CLOUD_INIT_PROFILE = [
-    {'name': 'name', 'description': 'Ddescription', 'URL': 'https://mysite.com/default.yaml'},
+    {'name': 'name', 'description': 'Ddescription', 'url': 'https://mysite.com/default.yaml'},
 ]

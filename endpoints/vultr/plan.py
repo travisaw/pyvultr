@@ -69,15 +69,22 @@ class Plan:
 
     def save_plans(self):
         """
-        Retrieves plan data from the Vultr API and saves it to a cache file.
-        This method sends a GET request to the 'plans' endpoint using the API client.
-        If the response is valid, it prints a message and caches the data locally.
+        Fetches plan data from the API, formats the monthly cost for each plan, and saves the processed data to a cache file.
+
+        This method performs the following steps:
+        1. Retrieves plan data from the API endpoint.
+        2. Validates the API response.
+        3. Formats the 'monthly_cost' field for each plan into a currency string and adds it as 'monthly_cost_str'.
+        4. Saves the updated plan data to a cache file.
+
         Returns:
             None
         """
         url = 'plans'
         data = self.api.api_get(url)
         if valid_response_vultr(data):
+            for plan in data["plans"]:
+                plan["monthly_cost_str"] = format_currency(plan['monthly_cost'])
             print('Saving plans data')
             create_data_cache(self.cache_file, data)
 
@@ -95,7 +102,6 @@ class Plan:
         if self.__plan_selected():
             sel_plan = next((plan for plan in self.plans['plans'] if plan['id'] == self.plan_id), None)
             if sel_plan:
-                print(sel_plan)
                 result = [
                     ['ID', sel_plan['id']],
                     ['vCPU Count', sel_plan['vcpu_count']],
@@ -105,7 +111,7 @@ class Plan:
                     ['Disk Count', sel_plan['disk_count']],
                     ['Disk Type', sel_plan['disk_type']],
                     ['Bandwidth', sel_plan['bandwidth']],
-                    ['Monthly Cost', format_currency(sel_plan['monthly_cost'])],
+                    ['Monthly Cost', sel_plan['monthly_cost_str']],
                     ['Type', sel_plan['type']],
                     ['CPU Vendor', sel_plan['cpu_vendor']],
                     ['Storage Type', sel_plan['storage_type']],
@@ -169,7 +175,7 @@ class Plan:
         else:
             return False
 
-    def select_all_plans(self):
+    def select_all_plans(self, zero_row = True):
         """
         Displays all available plans by printing the list of plans.
 
@@ -179,9 +185,9 @@ class Plan:
         Returns:
             None
         """
-        self.__print_plans(self.plans['plans'])
+        self.__print_plans(self.plans['plans'], zero_row)
 
-    def select_preferred_plans(self):
+    def select_preferred_plans(self, zero_row = True):
         """
         Displays the list of preferred plans by printing them.
 
@@ -191,9 +197,9 @@ class Plan:
         Returns:
             None
         """
-        self.__print_plans(self.preferred_plans)
+        self.__print_plans(self.preferred_plans, zero_row)
 
-    def select_region_plans(self):
+    def select_region_plans(self, zero_row = True):
         """
         Displays the available plans for the selected region.
 
@@ -205,9 +211,9 @@ class Plan:
             None
         """
         if self.get_region_plans():
-            self.__print_plans(self.region_plans)
+            self.__print_plans(self.region_plans, zero_row)
 
-    def select_preferred_region_plans(self):
+    def select_preferred_region_plans(self, zero_row = True):
         """
         Selects and prints the plans available in the preferred region.
 
@@ -219,9 +225,9 @@ class Plan:
             None
         """
         if self.get_preferred_region_plans():
-            self.__print_plans(self.preferred_region_plans)
+            self.__print_plans(self.preferred_region_plans, zero_row)
 
-    def __print_plans(self, plan_set):
+    def __print_plans(self, plan_set, zero_row):
         """
         Prints all available plans in a formatted table.
 
@@ -229,9 +235,12 @@ class Plan:
         Returns:
             None
         """
-        option, r_list = print_input_menu(plan_set, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost', 'type'], True)
-        self.plan_id = r_list[int(option) - 1][0]
-        self.plan_desc = r_list[int(option) - 1][1]
+        offset = 1
+        if zero_row:
+            offset = 0
+        option, r_list = print_input_menu(plan_set, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost_str', 'type'], zero_row)
+        self.plan_id = r_list[int(option) - offset][0]
+        self.plan_desc = r_list[int(option) - offset][1]
 
     def __plan_selected(self):
         """

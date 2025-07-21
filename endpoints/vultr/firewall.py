@@ -31,7 +31,7 @@ class Firewall:
             Deletes all rules from the currently selected firewall group.
         add_ip_to_firewall_rules():
             Adds rules for the current public IPv4 address to the selected firewall group.
-        __firewall_selected():
+        firewall_selected():
             Checks if a firewall group is selected; prints a message if not.
     Note:
         This class depends on external utility functions such as valid_response_vultr, print_input_menu, utc_to_local, and tabulate, as well as an API client with api_get, api_post, and api_delete methods.
@@ -87,7 +87,7 @@ class Firewall:
         Raises:
             Any exceptions raised by the underlying API call or response validation are propagated.
         """
-        if self.__firewall_selected():
+        if self.firewall_selected():
             url = f'firewalls/{self.firewall_id}'
             data = self.api.api_get(url)
             if valid_response_vultr(data):
@@ -104,7 +104,7 @@ class Firewall:
         Returns:
             None
         """
-        if self.__firewall_selected():
+        if self.firewall_selected():
             url = f'firewalls/{self.firewall_id}'
             data = self.api.api_get(url)
             if valid_response_vultr(data):
@@ -162,7 +162,7 @@ class Firewall:
         Raises:
             Any exceptions raised by the underlying API call or response validation.
         """
-        if not self.__firewall_selected():
+        if not self.firewall_selected():
             return
         url = f'firewalls/{self.firewall_id}'
         data = self.api.api_delete(url)
@@ -188,7 +188,7 @@ class Firewall:
 
         If no firewall is selected, the `firewall_rules` attribute is set to an empty list.
         """
-        if self.__firewall_selected():
+        if self.firewall_selected():
             url = f'firewalls/{self.firewall_id}/rules'
             data = self.api.api_get(url)
             if valid_response_vultr(data):
@@ -222,7 +222,7 @@ class Firewall:
         Returns:
             None
         """
-        if not self.__firewall_selected():
+        if not self.firewall_selected():
             return
         self.get_firewall_rules()
         result = []
@@ -236,7 +236,7 @@ class Firewall:
                 i[9],
             ]
             result.append(row)
-        print(tabulate(result, self.firewall_rules_header))
+        print_output_table(result, self.firewall_rules_header)
 
     def delete_all_firewall_rules(self):
         """
@@ -254,7 +254,7 @@ class Firewall:
             rules, where each rule is an iterable and the first element (`i[0]`) is the rule ID.
             Also assumes the existence of `self.api.api_delete()` and `valid_response_vultr()`.
         """
-        if not self.__firewall_selected():
+        if not self.firewall_selected():
             return
         self.get_firewall_rules()
         for i in self.firewall_rules:
@@ -269,7 +269,7 @@ class Firewall:
         Returns:
             None
         """
-        if not self.__firewall_selected():
+        if not self.firewall_selected():
             return
 
         # list all unique firewall rule notes
@@ -297,7 +297,7 @@ class Firewall:
         Returns:
             None
         """
-        if not self.__firewall_selected():
+        if not self.firewall_selected():
             return
         if not self.__firewall_rule_selected():
             return
@@ -315,7 +315,7 @@ class Firewall:
         Returns:
             None
         """
-        if not self.__firewall_selected():
+        if not self.firewall_selected():
             return
         notes = input("Notes for the firewall rules?['Added by pyvultr']: ")
         if notes == '':
@@ -333,7 +333,7 @@ class Firewall:
         Returns:
             None
         """
-        if not self.__firewall_selected():
+        if not self.firewall_selected():
             return
         notes = input("Notes for the firewall rules?['Added by pyvultr']: ")
         if notes == '':
@@ -357,9 +357,9 @@ class Firewall:
             - Prints a message for each successfully added rule.
             - Displays a table of the added firewall rules.
         Preconditions:
-            - A firewall must be selected (self.__firewall_selected() returns True).
+            - A firewall must be selected (self.firewall_selected() returns True).
         """
-        if not self.__firewall_selected():
+        if not self.firewall_selected():
             return
 
         result = []
@@ -394,9 +394,9 @@ class Firewall:
                 ]
                 result.append(detail_row)
 
-        print(tabulate(result, self.firewall_rules_header))
+        print_output_table(result, self.firewall_rules_header)
 
-    def __firewall_selected(self):
+    def firewall_selected(self):
         """
         Checks if a firewall has been selected by verifying that `self.firewall_id` is not an empty string.
 
