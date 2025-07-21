@@ -1,4 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response_cloudflare
+from util import utc_str_to_local, print_input_menu, valid_response_cloudflare
 from tabulate import tabulate
 
 class Zone:
@@ -141,9 +141,9 @@ class Zone:
                 ['Paused: ', self.zone_detail['paused']],
                 ['Name Servers: ', self.zone_detail['name_servers']],
                 ['Original Registrar: ', self.zone_detail['original_registrar']],
-                ['Date Created: ', utc_to_local(self.zone_detail['created_on'])],
-                ['Date Activated: ', utc_to_local(self.zone_detail['activated_on'])],
-                ['Date Updated: ', utc_to_local(self.zone_detail['modified_on'])],
+                ['Date Created: ', utc_str_to_local(self.zone_detail['created_on'])],
+                ['Date Activated: ', utc_str_to_local(self.zone_detail['activated_on'])],
+                ['Date Updated: ', utc_str_to_local(self.zone_detail['modified_on'])],
             ]
             print(tabulate(result))
         else:
@@ -257,8 +257,8 @@ class Zone:
                 ['Meta: ', match['meta']],
                 ['Comment: ', match['comment']],
                 ['Tags: ', match['tags']],
-                ['Created On: ', utc_to_local(match['created_on'])],
-                ['Modified On: ', utc_to_local(match['modified_on'])],
+                ['Created On: ', utc_str_to_local(match['created_on'])],
+                ['Modified On: ', utc_str_to_local(match['modified_on'])],
             ]
             print(tabulate(result))
         else:

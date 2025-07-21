@@ -4,21 +4,37 @@ import tzlocal
 import ipaddress
 from tabulate import tabulate
 
-def utc_to_local(utc_string):
+def utc_str_to_local(utc_string):
     """
-    Converts a UTC datetime string to the local system's timezone and returns it as a formatted string.
+    Converts a UTC datetime string to a local datetime object.
+
     Args:
-        utc_string (str): The UTC datetime string to convert.
+        utc_string (str): A string representing a UTC datetime.
+
     Returns:
-        str: The local time as a formatted string in the form "%Y-%m-%d %H:%M:%S %Z".
+        datetime: The corresponding local datetime object.
+
     Raises:
-        ValueError: If the input string does not match the detected datetime format.
-    Note:
-        This function relies on the `detect_datetime_format` function to determine the format of the input string,
-        and uses the system's local timezone for conversion.
+        ValueError: If the input string cannot be parsed as a valid UTC datetime.
     """
     utc_dt = get_utc_dt(utc_string)
+    return utc_to_local(utc_dt)
 
+def utc_to_local(utc_dt):
+    """
+    Converts a UTC datetime object to a string representing the local time zone.
+    Args:
+        utc_dt (datetime.datetime): A timezone-aware datetime object in UTC.
+    Returns:
+        str: The localized datetime as a string in the format "YYYY-MM-DD HH:MM:SS TZ".
+    Raises:
+        AttributeError: If `utc_dt` is not timezone-aware.
+    Example:
+        >>> import pytz, tzlocal, datetime
+        >>> utc_dt = datetime.datetime(2024, 6, 1, 12, 0, 0, tzinfo=pytz.UTC)
+        >>> utc_to_local(utc_dt)
+        '2024-06-01 08:00:00 EDT'
+    """
     # Get timezone of local system
     timezone = str(tzlocal.get_localzone()) # IE: America/New_York
 
@@ -40,15 +56,15 @@ def hour_minutee_day_diff(utc_string):
     Returns:
         str: A string describing the time difference in days, hours, and minutes,
              or "Less than a minute" if the difference is less than one minute.
-    """ 
-    utc_now = datetime.now(pytz.UTC)
+    """
+    utc_now = get_utc_now()
     utc_dt = get_utc_dt(utc_string)
 
     delta = utc_now - utc_dt
     days = delta.days
     hours = delta.seconds // 3600
     minutes = (delta.seconds % 3600) // 60
-    
+
     parts = []
     if days >= 1:
         parts.append(f"{days} day{'s' if days > 1 else ''}")
@@ -56,7 +72,7 @@ def hour_minutee_day_diff(utc_string):
         parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
     if minutes >= 1:
         parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
-    
+
     return ", ".join(parts) if parts else "Less than a minute"
 
 def get_utc_dt(utc_string):
@@ -77,6 +93,17 @@ def get_utc_dt(utc_string):
     utc_dt = datetime.strptime(utc_string, utc_format)
     utc_dt = utc_dt.replace(tzinfo=tz.utc)
     return utc_dt
+
+def get_utc_now():
+    """
+    Returns the current UTC datetime.
+
+    Uses the pytz library to ensure the returned datetime is timezone-aware.
+
+    Returns:
+        datetime: The current UTC datetime as a timezone-aware object.
+    """
+    return datetime.now(pytz.UTC)
 
 def detect_datetime_format(date_str):
     """
@@ -163,18 +190,18 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
 def print_output_table(data, headers=None):
     """
     Prints a formatted table to the console using the provided data and headers.
-    
+
     Args:
         data (list of dict): The data to be displayed in the table, where each dictionary represents a row.
         headers (list of str, optional): The headers for the table columns. If None, keys from the first row are used.
-    
+
     Returns:
         None
     """
     if not data:
         print("No data to display.")
         return
-    
+
     if headers is None:
         # headers = list(data[0].keys())
         print(tabulate(data))

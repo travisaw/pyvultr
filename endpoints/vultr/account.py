@@ -1,4 +1,4 @@
-from util import utc_to_local, print_output_table, format_currency
+from util import utc_str_to_local, print_output_table, format_currency
 
 def get_account_info(api):
     """
@@ -21,7 +21,7 @@ def get_account_info(api):
         ['Email: ', data['account']['email']],
         ['Balance: ', format_currency(data['account']['balance'])],
         ['Pending Charges: ', format_currency(data['account']['pending_charges'])],
-        ['Last Payment Date: ', utc_to_local(data['account']['last_payment_date'])],
+        ['Last Payment Date: ', utc_str_to_local(data['account']['last_payment_date'])],
         ['Last Payment Amount: ', format_currency(data['account']['last_payment_amount'])]
     ]
     print_output_table(result)

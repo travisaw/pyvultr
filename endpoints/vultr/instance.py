@@ -1,4 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency, print_yes_no, hour_minutee_day_diff
+from util import utc_str_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency, print_yes_no, hour_minutee_day_diff
 from data import load_cloud_init
 from colorama import Fore, Style
 from colorama import init as colorama_init
@@ -126,7 +126,7 @@ class Instance:
             - valid_response_vultr: Function to validate the API response.
             - self.fw_obj: Firewall object with 'firewall_id', 'get_firewall()', and 'firewall_desc' attributes.
             - tabulate: Function to format data in a table.
-            - utc_to_local: Function to convert UTC date strings to local time.
+            - utc_str_to_local: Function to convert UTC date strings to local time.
             - __instance_status_color, __instance_power_status_color, __instance_server_status_color: Methods to colorize status fields.
 
         Prints:
@@ -144,7 +144,7 @@ class Instance:
                     ['Hostname', data['instance']['hostname']],
                     ['Tags', data['instance']['tags']],
                     ['Region', self.r_obj.city_from_id(data['instance']['region'])],
-                    ['Date Created', utc_to_local(data['instance']['date_created'])],
+                    ['Date Created', utc_str_to_local(data['instance']['date_created'])],
                     ['Duration', hour_minutee_day_diff(data['instance']['date_created'])],
                     ['Plan', data['instance']['plan']],
                     ['OS', data['instance']['os']],

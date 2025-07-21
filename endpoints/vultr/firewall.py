@@ -1,4 +1,4 @@
-from util import utc_to_local, print_input_menu, valid_response_vultr, ip6_network_prefix, print_output_table
+from util import utc_str_to_local, print_input_menu, valid_response_vultr, ip6_network_prefix, print_output_table
 
 class Firewall:
     """
@@ -34,7 +34,7 @@ class Firewall:
         firewall_selected():
             Checks if a firewall group is selected; prints a message if not.
     Note:
-        This class depends on external utility functions such as valid_response_vultr, print_input_menu, utc_to_local, and tabulate, as well as an API client with api_get, api_post, and api_delete methods.
+        This class depends on external utility functions such as valid_response_vultr, print_input_menu, utc_str_to_local, and tabulate, as well as an API client with api_get, api_post, and api_delete methods.
     """
     firewall_id = str('')
     firewall_desc = str('')
@@ -110,8 +110,8 @@ class Firewall:
             if valid_response_vultr(data):
                 result = [
                     ['Description: ', data['firewall_group']['description']],
-                    ['Date Created: ', utc_to_local(data['firewall_group']['date_created'])],
-                    ['Date Updated: ', utc_to_local(data['firewall_group']['date_modified'])],
+                    ['Date Created: ', utc_str_to_local(data['firewall_group']['date_created'])],
+                    ['Date Updated: ', utc_str_to_local(data['firewall_group']['date_modified'])],
                     ['Instance Count: ', data['firewall_group']['instance_count']],
                     ['Rule Count: ', data['firewall_group']['rule_count']],
                     ['Max Rule Count: ', data['firewall_group']['max_rule_count']]

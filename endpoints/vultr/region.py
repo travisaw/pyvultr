@@ -1,4 +1,4 @@
-from util import print_input_menu, valid_response_vultr, print_output_table, utc_to_local
+from util import print_input_menu, valid_response_vultr, print_output_table, utc_str_to_local
 from data import create_data_cache, load_data_cache
 import settings
 
