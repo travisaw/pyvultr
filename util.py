@@ -17,11 +17,7 @@ def utc_to_local(utc_string):
         This function relies on the `detect_datetime_format` function to determine the format of the input string,
         and uses the system's local timezone for conversion.
     """
-    utc_format = detect_datetime_format(utc_string)
-
-    # Parse the UTC string into a datetime object
-    utc_dt = datetime.strptime(utc_string, utc_format)
-    utc_dt = utc_dt.replace(tzinfo=tz.utc)
+    utc_dt = get_utc_dt(utc_string)
 
     # Get timezone of local system
     timezone = str(tzlocal.get_localzone()) # IE: America/New_York
@@ -34,6 +30,34 @@ def utc_to_local(utc_string):
     local_dt_string = local_dt.strftime("%Y-%m-%d %H:%M:%S %Z")
 
     return local_dt_string
+
+def hour_minutee_day_diff(utc_string):
+    
+    utc_now = datetime.now(pytz.UTC)
+    utc_dt = get_utc_dt(utc_string)
+
+    delta = utc_now - utc_dt
+    days = delta.days
+    hours = delta.seconds // 3600
+    minutes = (delta.seconds % 3600) // 60
+    
+    parts = []
+    if days >= 1:
+        parts.append(f"{days} day{'s' if days > 1 else ''}")
+    if hours >= 1:
+        parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
+    if minutes >= 1:
+        parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
+    
+    return ", ".join(parts) if parts else "Less than a minute"
+
+def get_utc_dt(utc_string):
+    utc_format = detect_datetime_format(utc_string)
+
+    # Parse the UTC string into a datetime object
+    utc_dt = datetime.strptime(utc_string, utc_format)
+    utc_dt = utc_dt.replace(tzinfo=tz.utc)
+    return utc_dt
 
 def detect_datetime_format(date_str):
     """
@@ -59,6 +83,15 @@ def detect_datetime_format(date_str):
     else:
         raise ValueError("Unknown datetime format")
     return fmt
+
+def print_yes_no(prompt):
+    while True:
+        response = input(prompt + " (y/n): ").lower().strip()
+        if response in ['y', 'yes']:
+            return True
+        elif response in ['n', 'no']:
+            return False
+        print("Please enter 'y' or 'n'.")
 
 def print_input_menu(options, prompt, value_key, display_key, none_option = False):
     """

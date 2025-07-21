@@ -1,4 +1,5 @@
-from util import utc_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency
+from util import utc_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency, print_yes_no, hour_minutee_day_diff
+from data import load_cloud_init
 from colorama import Fore, Style
 from colorama import init as colorama_init
 import settings
@@ -144,6 +145,7 @@ class Instance:
                     ['Tags', data['instance']['tags']],
                     ['Region', self.r_obj.city_from_id(data['instance']['region'])],
                     ['Date Created', utc_to_local(data['instance']['date_created'])],
+                    ['Duration', hour_minutee_day_diff(data['instance']['date_created'])],
                     ['Plan', data['instance']['plan']],
                     ['OS', data['instance']['os']],
                     ['OS ID', data['instance']['os_id']],
@@ -235,6 +237,10 @@ class Instance:
                 else:
                     self.os_obj.get_all_os()
                 body['os_id'] = self.os_obj.os_id
+
+                # Load cloud-init configuration if available
+                if print_yes_no('Use Cloud Init?'):
+                    body['user_data'] = load_cloud_init('default.yml')
 
         # Send activation email if enabled
         if settings.EMAIL_INSTANCE_CREATION:
