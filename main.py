@@ -2,6 +2,14 @@
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import importlib.util
+
+def module_exists(module_name):
+    return importlib.util.find_spec(module_name) is not None
+
+if not module_exists('settings'):
+    print("The 'settings' module is required but not found!! Please copy settings.py.template to settings.py.")
+    exit(1)
 
 from api.vultr import Vultr
 from api.cloudflare import Cloudflare
