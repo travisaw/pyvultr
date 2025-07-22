@@ -1,4 +1,4 @@
-from util import utc_str_to_local, print_input_menu, valid_response_cloudflare
+from util import utc_str_to_local, print_input_menu, valid_response_cloudflare, print_yes_no
 from tabulate import tabulate
 
 class Zone:
@@ -266,26 +266,29 @@ class Zone:
 
     def create_dns_record_prompt(self):
         """
-        Prompts the user to enter details for a new DNS record (name and IP address), constructs the DNS record data,
-        and passes it to the method responsible for creating the DNS record.
+        Prompts the user to create a new DNS record for the selected zone.
 
-        The DNS record is created with the following default properties:
-        - Comment: "Added by pyvultr"
-        - Proxied: True
-        - TTL: 300 seconds
-        - Type: "A"
+        If a zone is selected, this method interactively asks the user for DNS record details:
+        - Whether the DNS record should be proxied.
+        - The DNS name.
+        - The IP address (content).
 
-        Calls:
-            self.create_dns_record(body): Creates the DNS record with the specified details.
+        It then constructs the DNS record body and calls `create_update_dns_record` to create or update the record.
+
+        Returns:
+            None
         """
         if self.__zone_selected():  
+            proxied = False
+            if print_yes_no('DNS Proxied?'):
+                proxied = True
             name = input('DNS Name:')
             content = input('IP Address:')
             body = {
                 "comment": "Added by pyvultr",
                 "content": content,
                 "name": name,
-                "proxied": True,
+                "proxied": proxied,
                 "ttl": 300,
                 "type": "A"
             }

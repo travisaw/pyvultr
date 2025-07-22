@@ -315,11 +315,14 @@ class Instance:
         if self.instance_ip4 == '0.0.0.0' or self.instance_ip4 == '':
             print('No IP address assigned yet.')
             return
+        proxied = False
+        if print_yes_no('DNS Proxied?'):
+            proxied = True
         body = {
             "comment": "Added by pyvultr",
             "content": self.instance_ip4,
             "name": self.instance_hostname,
-            "proxied": False,
+            "proxied": proxied,
             "ttl": 300,
             "type": "A"
         }
