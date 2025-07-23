@@ -278,7 +278,7 @@ class Zone:
         Returns:
             None
         """
-        if self.__zone_selected():  
+        if self.__zone_selected():
             proxied = False
             if print_yes_no('DNS Proxied?'):
                 proxied = True
@@ -312,16 +312,12 @@ class Zone:
         if self.__zone_selected():
             if self.__does_dns_record_exist(body):
                 # Prompt user to update or create a new DNS record
-                print('DNS Record already exists. Update record or create a new one? (y/n)')
-                choice = input('Enter y to update, n to create a new record: ').strip().lower()
-                if choice == 'y':
+                if print_yes_no('DNS Record already exists. Update record(y) or create a new one(n)?'):
                     # Update existing DNS record
                     self.__update_dns_record(body)
-                elif choice == 'n':
+                else:
                     # Create a new DNS record
                     self.__create_dns_record(body)
-                else:
-                    print('Invalid choice. Please enter y or n.')
             else:
                 self.__create_dns_record(body)
             self.get_dns_records()

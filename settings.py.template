@@ -25,5 +25,6 @@ INSTANCE_TAGS = ['pyvultr']
 EMAIL_INSTANCE_CREATION = True
 
 CLOUD_INIT_PROFILE = [
-    {'name': 'name', 'description': 'Ddescription', 'url': 'https://mysite.com/default.yaml'},
+    {'id': 1, 'name': 'default1', 'description': 'Description', 'source_type': 'http', 'source': 'https://mysite.com/default1.yaml'},
+    {'id': 2, 'name': 'default2', 'description': 'Description', 'source_type': 'local', 'source': 'default2.yaml'},
 ]

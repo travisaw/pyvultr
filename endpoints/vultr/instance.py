@@ -1,5 +1,5 @@
 from util import utc_str_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency, print_yes_no, hour_minutee_day_diff
-from data import load_cloud_init
+from data import load_cloud_init_local, load_cloud_init_http
 from colorama import Fore, Style
 from colorama import init as colorama_init
 import settings
@@ -198,7 +198,7 @@ class Instance:
             self.r_obj.get_preferred_region()
         else:
             self.r_obj.get_all_region()
-        
+
         if settings.PREFERRED_PLAN_ONLY:
             print('Using preferred plans only.')
             self.p_obj.select_preferred_region_plans(False)
@@ -240,7 +240,7 @@ class Instance:
 
                 # Load cloud-init configuration if available
                 if print_yes_no('Use Cloud Init?'):
-                    body['user_data'] = load_cloud_init('default.yml')
+                    body['user_data'] = self.__get_cloud_init()
 
         # Send activation email if enabled
         if settings.EMAIL_INSTANCE_CREATION:
@@ -311,6 +311,16 @@ class Instance:
             print(f"Firewall updated to {self.fw_obj.firewall_desc}")
 
     def dns_from_hostname_ip4(self):
+        """
+        Creates or updates an A record in the DNS zone for the instance's hostname and IPv4 address.
+
+        This method selects the appropriate DNS zone, checks if the instance has a valid IPv4 address,
+        prompts the user to determine if the DNS record should be proxied, and then creates or updates
+        the DNS record with the specified parameters.
+
+        Returns:
+            None
+        """
         self.cf_obj.get_zones() # Select DNS zone
         if self.instance_ip4 == '0.0.0.0' or self.instance_ip4 == '':
             print('No IP address assigned yet.')
@@ -442,3 +452,26 @@ class Instance:
             return True
         else:
             return False
+
+    def __get_cloud_init(self):
+        """
+        Retrieves and loads a cloud-init profile based on user selection.
+        Presents a menu to the user to select a cloud-init profile from the available options in `settings.CLOUD_INIT_PROFILE`.
+        Loads the selected profile using the appropriate method depending on its `source_type` ('http' or 'local').
+        If the source type is unknown, prints an error message.
+        Returns:
+            dict or object: The loaded cloud-init profile data.
+        Raises:
+            KeyError: If the selected profile does not exist.
+            ValueError: If the profile's source type is not supported.
+        """
+        option, r_list = print_input_menu(settings.CLOUD_INIT_PROFILE, 'What profile to use?: ', 'id', ['name', 'source_type', 'source'], False)
+        profile = [item for item in settings.CLOUD_INIT_PROFILE if item['id'] == int(option)][0]  # Default to 'Default' profile
+
+        match profile['source_type']:
+            case 'http':
+                return load_cloud_init_http(profile['source'])
+            case 'local':
+                return load_cloud_init_local(profile['source'])
+            case _:
+                print(f"Unknown source type {profile['source_type']}")
