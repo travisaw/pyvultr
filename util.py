@@ -140,7 +140,7 @@ def print_yes_no(prompt):
             return False
         print("Please enter 'y' or 'n'.")
 
-def print_input_menu(options, prompt, value_key, display_key, none_option = False):
+def print_input_menu(options, prompt, value_key, display_key, none_option = False, headers = None):
     """
     Displays a menu of selectable options to the user, prompts for a selection, and returns the user's choice along with the list of options.
     Args:
@@ -176,7 +176,12 @@ def print_input_menu(options, prompt, value_key, display_key, none_option = Fals
                 print_row.append(i[j])
             print_list.append(print_row)
             inst_count += 1
-        print(tabulate(print_list)) # Print menu output
+
+        if headers is None:
+            print(tabulate(print_list)) # Print menu output
+        else:
+            print(tabulate(print_list, headers = headers))
+
         if settings.PRINT_TIMESTAMP:
             print(f"{utc_to_local(get_utc_now())}")
         try:

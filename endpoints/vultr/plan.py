@@ -155,7 +155,7 @@ class Plan:
             return True
         else:
             return False
-        
+
     def get_preferred_region_plans(self):
         """
         Filters and stores plans available in the currently selected region that match preferred plan IDs.
@@ -235,10 +235,12 @@ class Plan:
         Returns:
             None
         """
+        display_row = ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost_str', 'type']
+        header_row = ['Sel', 'Name', 'RAM', 'Disk Size', 'vCPU Count', 'Bandwidth', 'Monthly Cost', 'Type']
         offset = 1
         if zero_row:
             offset = 0
-        option, r_list = print_input_menu(plan_set, 'What plan to select?: ', 'id', ['id', 'ram', 'disk', 'vcpu_count', 'bandwidth', 'monthly_cost_str', 'type'], zero_row)
+        option, r_list = print_input_menu(plan_set, 'What plan to select?: ', 'id', display_row, zero_row, header_row)
         self.plan_id = r_list[int(option) - offset][0]
         self.plan_desc = r_list[int(option) - offset][1]
 
