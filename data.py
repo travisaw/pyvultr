@@ -28,8 +28,8 @@ def load_data_cache(file_name):
     Loads data from the cache file if it exists.
     Returns the data as a dictionary or None if the file does not exist.
     """
-    directory = './data'
-    file_path = os.path.join(directory, file_name)
+    directory = 'data'
+    file_path = os.path.join('.', directory, file_name)
 
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
@@ -64,8 +64,8 @@ def load_cloud_init_local(file_name):
     Loads cloud-init configuration from a file.
     Returns the content of the file as a string or None if the file does not exist.
     """
-    directory = './data'
-    file_path = os.path.join(directory, file_name)
+    directory = 'data'
+    file_path = os.path.join('.', directory, file_name)
 
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
@@ -73,4 +73,5 @@ def load_cloud_init_local(file_name):
         bytes_data = string_data.encode('utf-8')
         return base64.b64encode(bytes_data).decode('utf-8')
     else:
+        print(f"{file_name} doesn't exist!")
         return None

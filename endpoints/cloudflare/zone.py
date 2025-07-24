@@ -394,7 +394,7 @@ class Zone:
         Returns:
             bool: True if DNS records exist (zone is selected), False otherwise. Prints a message if no zone is selected.
         """
-        if self.dns_records:
+        if len(self.zone_id.strip()) > 0:
             return True
         else:
             print('No DNS Zone Selected!')
