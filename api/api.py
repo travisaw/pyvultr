@@ -1,4 +1,5 @@
 import requests
+import settings
 
 class Api():
     """
@@ -34,6 +35,7 @@ class Api():
         call_url = self.base_url + url
         headers = self.__get_headers()
         response = requests.get(call_url, headers=headers)
+        self.__print_response_summary(response)
         return self.process_response(response)
 
     def api_post(self, url, data):
@@ -54,6 +56,7 @@ class Api():
         call_url = self.base_url + url
         headers = self.__get_headers()
         response = requests.post(call_url, json=data, headers=headers)
+        self.__print_response_summary(response)
         return self.process_response(response)
 
     def api_put(self, url, data):
@@ -73,6 +76,7 @@ class Api():
         call_url = self.base_url + url
         headers = self.__get_headers()
         response = requests.put(call_url, json=data, headers=headers)
+        self.__print_response_summary(response)
         return self.process_response(response)
 
     def api_patch(self, url, data):
@@ -93,6 +97,7 @@ class Api():
         call_url = self.base_url + url
         headers = self.__get_headers()
         response = requests.patch(call_url, json=data, headers=headers)
+        self.__print_response_summary(response)
         return self.process_response(response)
 
     def api_delete(self, url):
@@ -112,6 +117,7 @@ class Api():
         call_url = self.base_url + url
         headers = self.__get_headers()
         response = requests.delete(call_url, headers=headers)
+        self.__print_response_summary(response)
         return self.process_response(response)
 
     def __get_headers(self):
@@ -129,3 +135,17 @@ class Api():
             'Authorization': f'Bearer {self.token}',
             'Content-Type': 'application/json' # Adjust content type if needed
         }
+
+    def __print_response_summary(self, response):
+        """
+        Prints a summary of the HTTP response, including status code and headers.
+
+        Args:
+            response (requests.Response): The HTTP response object to summarize.
+        """
+        if settings.PRINT_API_RESPONSE_SUMMARY:
+            print(f"Response Status Code: {response.status_code}")
+            print(f"Response Time: {response.elapsed.total_seconds()} seconds")
+            # print("Response Headers:")
+            # for key, value in response.headers.items():
+            #     print(f"{key}: {value}")

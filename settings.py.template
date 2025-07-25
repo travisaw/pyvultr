@@ -3,6 +3,8 @@
 
 PRINT_TIMESTAMP = True # Whether to print the current timestamp with each menu
 
+PRINT_API_RESPONSE_SUMMARY = True # Whether to print a summary of API responses
+
 PREFERRED_PLAN_IDS = [
     '<plan_1>',
     '<plan_2>',
