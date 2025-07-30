@@ -133,12 +133,16 @@ def detect_datetime_format(date_str):
 
 def print_yes_no(prompt):
     while True:
-        response = input(prompt + " (y/n): ").lower().strip()
-        if response in ['y', 'yes']:
-            return True
-        elif response in ['n', 'no']:
-            return False
-        print("Please enter 'y' or 'n'.")
+        try:
+            response = input(prompt + " (y/n): ").lower().strip()
+            if response in ['y', 'yes']:
+                return True
+            elif response in ['n', 'no']:
+                return False
+            print("Please enter 'y' or 'n'.")
+        except KeyboardInterrupt:
+            print("\nExiting.")
+            exit()
 
 def print_input_menu(options, prompt, value_key, display_key, none_option = False, headers = None):
     """
