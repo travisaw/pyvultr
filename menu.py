@@ -8,7 +8,7 @@ from endpoints.vultr.region import Region
 from endpoints.vultr.snapshot import Snapshot
 from endpoints.cloudflare.zone import Zone
 from endpoints.ipify import Ipify
-from util import print_input_menu
+from util import print_input_menu, print_text_prompt
 
 class Menu():
     """
@@ -287,14 +287,14 @@ class Menu():
                 self.obj_ss.get_snapshot()
                 self.snapshot()
             case '3':
-                ss_name = input("New snapshot Name?: ")
+                ss_name = print_text_prompt("New snapshot Name?: ")
                 self.obj_ss.create_snapshot(ss_name, self.obj_i.instance_id)
                 self.snapshot()
             case '4':
                 self.obj_ss.delete_snapshot()
                 self.snapshot()
             case '5':
-                ss_name = input("New snapshot Name?: ")
+                ss_name = print_text_prompt("New snapshot Name?: ")
                 self.obj_ss.update_snapshot(ss_name)
                 self.snapshot()
             case '6':

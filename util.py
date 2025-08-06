@@ -144,6 +144,15 @@ def print_yes_no(prompt):
             print("\nExiting.")
             exit()
 
+def print_text_prompt(prompt):
+    while True:
+        try:
+            response = input(prompt)
+            return response
+        except KeyboardInterrupt:
+            print("\nExiting.")
+            exit()
+
 def print_input_menu(options, prompt, value_key, display_key, none_option = False, headers = None):
     """
     Displays a menu of selectable options to the user, prompts for a selection, and returns the user's choice along with the list of options.

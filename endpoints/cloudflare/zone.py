@@ -1,4 +1,4 @@
-from util import utc_str_to_local, print_input_menu, valid_response_cloudflare, print_yes_no
+from util import utc_str_to_local, print_input_menu, valid_response_cloudflare, print_yes_no, print_text_prompt
 from tabulate import tabulate
 
 class Zone:
@@ -282,8 +282,8 @@ class Zone:
             proxied = False
             if print_yes_no('DNS Proxied?'):
                 proxied = True
-            name = input('DNS Name:')
-            content = input('IP Address:')
+            name = print_text_prompt('DNS Name:')
+            content = print_text_prompt('IP Address:')
             body = {
                 "comment": "Added by pyvultr",
                 "content": content,

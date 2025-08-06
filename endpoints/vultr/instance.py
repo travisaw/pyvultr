@@ -1,4 +1,4 @@
-from util import utc_str_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency, print_yes_no, hour_minutee_day_diff
+from util import utc_str_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency, print_yes_no, hour_minutee_day_diff, print_text_prompt
 from data import load_cloud_init_local, load_cloud_init_http
 from colorama import Fore, Style
 from colorama import init as colorama_init
@@ -191,7 +191,7 @@ class Instance:
             - Initiates the creation of a new instance using the collected information.
         """
         # Prompt for hostname/label
-        label = input('Hostname/Label?:')
+        label = print_text_prompt('Hostname/Label?:')
 
         # Select region and plans
         if settings.PREFERRED_REGION_ONLY:

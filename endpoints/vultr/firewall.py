@@ -1,4 +1,4 @@
-from util import utc_str_to_local, print_input_menu, valid_response_vultr, ip6_network_prefix, print_output_table
+from util import utc_str_to_local, print_input_menu, valid_response_vultr, ip6_network_prefix, print_output_table, print_text_prompt
 
 class Firewall:
     """
@@ -126,7 +126,7 @@ class Firewall:
         Returns:
             None
         """
-        fw_name = input("New Firewall Name?: ")
+        fw_name = print_text_prompt("New Firewall Name?: ")
         body = {'description': fw_name}
         self.create_firewall(body)
 
@@ -317,7 +317,7 @@ class Firewall:
         """
         if not self.firewall_selected():
             return
-        notes = input("Notes for the firewall rules?['Added by pyvultr']: ")
+        notes = print_text_prompt("Notes for the firewall rules?['Added by pyvultr']: ")
         if notes == '':
             notes = 'Added by pyvultr'
         ip4 = self.ipify.get_ip4()
@@ -335,7 +335,7 @@ class Firewall:
         """
         if not self.firewall_selected():
             return
-        notes = input("Notes for the firewall rules?['Added by pyvultr']: ")
+        notes = print_text_prompt("Notes for the firewall rules?['Added by pyvultr']: ")
         if notes == '':
             notes = 'Added by pyvultr'
         ip6 = self.ipify.get_ip6()
