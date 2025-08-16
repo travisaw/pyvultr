@@ -381,6 +381,18 @@ class Menu():
                 self.main_menu()
 
     def os(self):
+        """
+        Displays an operating system (OS) management menu and handles user actions.
+
+        Presents a menu with the following options:
+            1. Save OS: Saves the currently selected OS.
+            2. Show Selected OS: Displays information about the selected OS.
+            3. Select From All OS: Allows the user to select an OS from all available options.
+            4. Select From Preferred OS: Allows the user to select an OS from a list of preferred options.
+            5. Go Back: Returns to the main menu.
+
+        The method loops after each action until the user chooses to go back.
+        """
         options = [
             {'id': 1, 'name': 'Save OS'},
             {'id': 2, 'name': 'Show Selected OS'},
@@ -470,7 +482,6 @@ class Menu():
             2. Return to the main menu by calling `self.main_menu()`.
         Utilizes `print_input_menu` to render the menu and handle user input.
         """
-
         options = [
             {'id': 1, 'name': 'My IP Address'},
             {'id': 2, 'name': 'Go Back'},

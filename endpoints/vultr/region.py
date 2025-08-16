@@ -73,6 +73,16 @@ class Region:
             create_data_cache(self.cache_file, data)
 
     def print_region(self):
+        """
+        Prints information about the currently selected region.
+
+        If a region is selected, this method retrieves the region details from the list of regions
+        using the region ID, prints the region dictionary, and then displays a formatted table
+        containing the region's ID, city, country, continent, and options.
+
+        Returns:
+            None
+        """
         if self.region_selected():
             sel_region = next((region for region in self.regions['regions'] if region['id'] == self.region_id), None)
             if sel_region:

@@ -66,11 +66,12 @@ class OS:
 
     def save_os(self):
         """
-        Retrieves the list of operating systems from the Vultr API and saves the data to a cache file.
-
-        This method sends a GET request to the 'os' endpoint using the API client. If the response is valid,
-        it prints a message and caches the operating system data locally.
-
+        Retrieves operating system data from the Vultr API, saves it to a cache file,
+        and reloads the operating system data.
+        The method performs the following steps:
+        1. Sends a GET request to the 'os' endpoint using the API client.
+        2. Validates the response using `valid_response_vultr`.
+        3. If the response is valid, saves the data to a cache file and reloads the OS data.
         Returns:
             None
         """
@@ -79,6 +80,7 @@ class OS:
         if valid_response_vultr(data):
             print('Saving operating system data')
             create_data_cache(self.cache_file, data)
+            self.load_os()
 
     def print_os(self):
         """
@@ -145,7 +147,7 @@ class OS:
         Checks if an operating system (OS) has been selected.
 
         Returns:
-            bool: True if an OS has been selected (i.e., self.os_id is not an empty string), 
+            bool: True if an OS has been selected (i.e., self.os_id is not an empty string),
             False otherwise. Prints a message if no OS is selected.
         """
         if self.os_id != '':
