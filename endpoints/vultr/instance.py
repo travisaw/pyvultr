@@ -54,18 +54,18 @@ class Instance:
     instance_ip4 = ''
     instance_ip6 = ''
 
-    def __init__(self, api, fw_obj, ss_obj, cf_obj, p_obj, r_obj, os_obj):
+    def __init__(self, api, fw_obj, ss_obj, cf_obj, p_obj, r_obj, os_obj, ap_obj):
         """
-        Initializes the instance with required API and object dependencies.
-
+        Initializes the instance with the provided API and related objects.
         Args:
             api: The API client or interface used for making requests.
-            fw_obj: Firewall object for managing firewall configurations.
-            ss_obj: Snapshot object for handling instance snapshots.
-            cf_obj: Configuration object for instance settings.
-            p_obj: Plan object representing instance plans.
-            r_obj: Region object specifying instance regions.
-            os_obj: Operating system object for managing OS-related operations.
+            fw_obj: Firewall object for managing firewall-related operations.
+            ss_obj: Snapshot object for handling snapshot-related tasks.
+            cf_obj: Configuration object for managing configuration settings.
+            p_obj: Plan object for handling plan-related operations.
+            r_obj: Region object for managing region-specific tasks.
+            os_obj: Operating system object for OS-related operations.
+            ap_obj: Application object for managing application-related tasks.
         """
         self.api = api
         self.fw_obj = fw_obj
@@ -74,6 +74,7 @@ class Instance:
         self.p_obj = p_obj
         self.r_obj = r_obj
         self.os_obj = os_obj
+        self.ap_obj = ap_obj
         colorama_init(autoreset=True)
 
     def get_instances(self):
@@ -225,6 +226,7 @@ class Instance:
         os_source = [
             {'id': '1', 'name': 'Snapshot'},
             {'id': '2', 'name': 'Blank OS'},
+            {'id': '3', 'name': 'Application'},
         ]
         option, r_list = print_input_menu(os_source, 'What OS to use?: ', 'id', ['name'], False)
         match r_list[int(option) - 1][0]:
@@ -241,6 +243,13 @@ class Instance:
                 # Load cloud-init configuration if available
                 if print_yes_no('Use Cloud Init?'):
                     body['user_data'] = self.__get_cloud_init()
+            case '3':
+                if settings.PREFERRED_APPLICATION_ONLY:
+                    self.ap_obj.get_preferred_applications()
+                else:
+                    self.ap_obj.get_all_applications()
+                print(self.ap_obj.application_image_id)
+                body['image_id'] = self.ap_obj.application_image_id
 
         # Send activation email if enabled
         if settings.EMAIL_INSTANCE_CREATION:

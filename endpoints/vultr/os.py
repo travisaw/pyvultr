@@ -138,7 +138,7 @@ class OS:
                 if os.get('id') == o:
                     os_out.append(os)
                     break
-        option, r_list = print_input_menu(os_out, 'What os to select?: ', 'id', ['id', 'name', 'arch', 'family'], False)
+        option, r_list = print_input_menu(os_out, 'What OS to select?: ', 'id', ['id', 'name', 'arch', 'family'], False)
         self.os_id = r_list[int(option) - 1][0]
         self.os_desc = r_list[int(option) - 1][1]
 
