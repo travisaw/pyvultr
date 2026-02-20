@@ -86,7 +86,6 @@ class Region:
         if self.region_selected():
             sel_region = next((region for region in self.regions['regions'] if region['id'] == self.region_id), None)
             if sel_region:
-                print(sel_region)
                 data = [
                     ['ID', sel_region['id']],
                     ['City', sel_region['city']],

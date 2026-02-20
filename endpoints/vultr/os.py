@@ -96,7 +96,6 @@ class OS:
         if self.__os_selected():
             sel_os = next((os for os in self.os['os'] if os['id'] == self.os_id), None)
             if sel_os:
-                print(sel_os)
                 data = [
                     ['ID', sel_os['id']],
                     ['Name', sel_os['name']],
