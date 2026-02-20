@@ -1,5 +1,6 @@
 
 from endpoints.vultr.account import get_account_info
+from endpoints.vultr.application import Application
 from endpoints.vultr.instance import Instance
 from endpoints.vultr.firewall import Firewall
 from endpoints.vultr.os import OS
@@ -60,16 +61,17 @@ class Menu():
             obj_cf: Zone object for Cloudflare zones.
             obj_i: Instance object for Vultr compute instances, initialized with dependencies.
         """
-        self.vultr_api = vultr_api               # Vultr API Object
-        self.cloudflare_api = cloudflare_api     # Cloudflare API Object
-        self.obj_ip = Ipify()                    # Ipify Zone Object
-        self.obj_fw = Firewall(self.vultr_api, self.obj_ip)   # Firewall Object
-        self.obj_r = Region(self.vultr_api)      # Vultr Region Object
-        self.obj_p = Plan(self.vultr_api, self.obj_r)        # Vultr Compute Plan Object
-        self.obj_ss = Snapshot(self.vultr_api)   # Vultr Snapshot Object
-        self.obj_os = OS(self.vultr_api)        # Initialize OperatingSystem Object
-        self.obj_cf = Zone(self.cloudflare_api)  # Cloudflare Zone Object
-        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r, self.obj_os) # Vultr Compute Instance Object
+        self.vultr_api = vultr_api                # Vultr API Object
+        self.cloudflare_api = cloudflare_api      # Cloudflare API Object
+        self.obj_ip = Ipify()                     # Ipify Zone Object
+        self.obj_fw = Firewall(self.vultr_api, self.obj_ip) # Firewall Object
+        self.obj_r = Region(self.vultr_api)       # Vultr Region Object
+        self.obj_p = Plan(self.vultr_api, self.obj_r) # Vultr Compute Plan Object
+        self.obj_ss = Snapshot(self.vultr_api)    # Vultr Snapshot Object
+        self.obj_os = OS(self.vultr_api)          # Initialize Operating System Object
+        self.obj_ap = Application(self.vultr_api) # Initialize Application Object
+        self.obj_cf = Zone(self.cloudflare_api)   # Cloudflare Zone Object
+        self.obj_i = Instance(self.vultr_api, self.obj_fw, self.obj_ss, self.obj_cf, self.obj_p, self.obj_r, self.obj_os, self.obj_ap) # Vultr Compute Instance Object
 
     def main_menu(self):
         """
@@ -86,9 +88,10 @@ class Menu():
             {'id': 5, 'name': 'Compute Regions'},
             {'id': 6, 'name': 'Compute Plans'},
             {'id': 7, 'name': 'Operating Systems'},
-            {'id': 8, 'name': 'DNS Zones'},
-            {'id': 9, 'name': 'Other'},
-            {'id': 10, 'name': 'Exit'},
+            {'id': 8, 'name': 'Applications'},
+            {'id': 9, 'name': 'DNS Zones'},
+            {'id': 10, 'name': 'Other'},
+            {'id': 11, 'name': 'Exit'},
         ]
         option, inst_list = print_input_menu(options, 'What area?: ', 'id', ['name'], False)
         match option:
@@ -107,10 +110,12 @@ class Menu():
             case '7':
                 self.os()
             case '8':
-                self.dns_zone()
+                self.applications()
             case '9':
-                self.other()
+                self.dns_zone()
             case '10':
+                self.other()
+            case '11':
                 exit()
 
     def account(self):
@@ -414,6 +419,42 @@ class Menu():
             case '4':
                 self.obj_os.get_preferred_os()
                 self.os()
+            case '5':
+                self.main_menu()
+
+    def applications(self):
+        """
+        Displays a menu for application-related actions and handles user selection.
+
+        Presents the user with a list of options to save applications, show the selected application,
+        select from all applications, select from preferred applications, or go back to the main menu.
+        Executes the corresponding method based on the user's choice and loops back to the menu
+        unless the user chooses to go back.
+
+        Returns:
+            None
+        """
+        options = [
+            {'id': 1, 'name': 'Save Applications'},
+            {'id': 2, 'name': 'Show Selected Application'},
+            {'id': 3, 'name': 'Select From All Applications'},
+            {'id': 4, 'name': 'Select From Preferred Applications'},
+            {'id': 5, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
+        match option:
+            case '1':
+                self.obj_ap.save_applications()
+                self.applications()
+            case '2':
+                self.obj_ap.print_application()
+                self.applications()
+            case '3':
+                self.obj_ap.get_all_applications()
+                self.applications()
+            case '4':
+                self.obj_ap.get_preferred_applications()
+                self.applications()
             case '5':
                 self.main_menu()
 

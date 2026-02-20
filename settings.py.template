@@ -5,6 +5,13 @@ PRINT_TIMESTAMP = True # Whether to print the current timestamp with each menu
 
 PRINT_API_RESPONSE_SUMMARY = True # Whether to print a summary of API responses
 
+PREFERRED_APPLICATION_ONLY = True
+
+PREFERRED_APPLICATION_IDS = [
+    1234,
+    5678,
+]
+
 PREFERRED_PLAN_IDS = [
     '<plan_1>',
     '<plan_2>',
