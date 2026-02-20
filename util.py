@@ -379,3 +379,7 @@ def format_currency(value_as_number):
         return "$ {:,.2f}".format(value_as_number)
     except (ValueError, TypeError):
         return value_as_number
+
+def format_option(s):
+    """Formats a string by capitalizing each word and replacing underscores with spaces."""
+    return ' '.join(word.capitalize() for word in s.strip().split('_'))

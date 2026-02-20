@@ -1,4 +1,5 @@
-from util import print_input_menu, valid_response_vultr, print_output_table, utc_str_to_local
+from requests import options
+from util import print_input_menu, valid_response_vultr, print_output_table, format_option
 from data import create_data_cache, load_data_cache
 import settings
 
@@ -86,12 +87,14 @@ class Region:
         if self.region_selected():
             sel_region = next((region for region in self.regions['regions'] if region['id'] == self.region_id), None)
             if sel_region:
+                options = sel_region['options']
+                options_formatted = '\n'.join(f'- {format_option(opt)}' for opt in options)
                 data = [
                     ['ID', sel_region['id']],
                     ['City', sel_region['city']],
                     ['Country', sel_region['country']],
                     ['Continent', sel_region['continent']],
-                    ['Options', sel_region['options']],
+                    ['Options', options_formatted],
                 ]
                 print_output_table(data)
 
