@@ -1,4 +1,4 @@
-from util import utc_str_to_local, print_input_menu, valid_response_cloudflare, print_yes_no, print_text_prompt
+from util import utc_str_to_local, print_input_menu, valid_response_cloudflare, print_yes_no, print_text_prompt, red_text, yellow_text
 from tabulate import tabulate
 
 class Zone:
@@ -147,7 +147,7 @@ class Zone:
             ]
             print(tabulate(result))
         else:
-            print("No DNS Zone Selected!")
+            print(yellow_text('No DNS Zone Selected!'))
 
     def get_dns_records(self):
         """
@@ -246,6 +246,9 @@ class Zone:
         """
         if self.dns_record_id:
             match = next((d for d in self.dns_records if d.get('id') == self.dns_record_id), None)
+            if match is None:
+                print(red_text('DNS Record not found. Deleted?'))
+                return
             result = [
                 ['Name: ', match['name']],
                 ['Type: ', match['type']],
@@ -262,7 +265,7 @@ class Zone:
             ]
             print(tabulate(result))
         else:
-            print('No DNS Record Selected')
+            print(yellow_text('No DNS Record Selected'))
 
     def create_dns_record_prompt(self):
         """
@@ -397,7 +400,7 @@ class Zone:
         if len(self.zone_id.strip()) > 0:
             return True
         else:
-            print('No DNS Zone Selected!')
+            print(yellow_text('No DNS Zone Selected!'))
             return False
 
     def __does_dns_record_exist(self, body):

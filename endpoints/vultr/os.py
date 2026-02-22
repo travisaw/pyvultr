@@ -1,4 +1,4 @@
-from util import print_input_menu, print_output_table, valid_response_vultr
+from util import print_input_menu, print_output_table, valid_response_vultr, yellow_text
 from data import create_data_cache, load_data_cache
 import settings
 
@@ -152,6 +152,6 @@ class OS:
         if self.os_id != '':
             return True
         else:
-            print('No OS Selected!')
+            print(yellow_text('No OS Selected!'))
             return False
 

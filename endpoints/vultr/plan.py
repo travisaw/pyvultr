@@ -1,4 +1,4 @@
-from util import print_input_menu, valid_response_vultr, print_output_table, format_currency
+from util import print_input_menu, valid_response_vultr, print_output_table, format_currency, yellow_text
 from data import create_data_cache, load_data_cache
 import settings
 
@@ -255,5 +255,5 @@ class Plan:
         if self.plan_id != '':
             return True
         else:
-            print('No Plan Selected!')
+            print(yellow_text('No Plan Selected!'))
             return False

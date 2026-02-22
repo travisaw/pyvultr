@@ -1,4 +1,4 @@
-from util import utc_str_to_local, print_input_menu, valid_response_vultr, ip6_network_prefix, print_output_table, print_text_prompt
+from util import utc_str_to_local, print_input_menu, valid_response_vultr, print_output_table, print_text_prompt, yellow_text
 
 class Firewall:
     """
@@ -407,7 +407,7 @@ class Firewall:
         if self.firewall_id != '':
             return True
         else:
-            print('No Firewall Selected!')
+            print(yellow_text('No Firewall Selected!'))
             return False
 
     def __firewall_rule_selected(self):

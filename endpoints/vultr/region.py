@@ -1,5 +1,5 @@
 from requests import options
-from util import print_input_menu, valid_response_vultr, print_output_table, format_option
+from util import print_input_menu, valid_response_vultr, print_output_table, format_option, yellow_text
 from data import create_data_cache, load_data_cache
 import settings
 
@@ -149,5 +149,5 @@ class Region:
         if self.region_id != '':
             return True
         else:
-            print('No Region Selected!')
+            print(yellow_text('No Region Selected!'))
             return False

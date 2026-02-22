@@ -132,7 +132,7 @@ class Instance:
             - A table of instance details if an instance is selected and the API response is valid.
             - 'No Instance Selected!' if no instance is selected.
         """
-        if self.instance_id != '':
+        if self.instance_selected():
             url = f'instances/{self.instance_id}'
             data = self.api.api_get(url)
             if valid_response_vultr(data):
@@ -170,8 +170,6 @@ class Instance:
                     ['Pending Charges', format_currency(data['instance']['pending_charges'])],
                 ]
                 print_output_table(output)
-        else:
-            print('No Instance Selected!')
 
     def create_instance_prompt(self):
         """
@@ -291,12 +289,13 @@ class Instance:
         Returns:
             None
         """
-        if self.__is_instance_prod():
-            return
-        url = f'instances/{self.instance_id}'
-        data = self.api.api_delete(url)
-        if valid_response_vultr(data):
-            print(f" {data['status']}: {data['info']}")
+        if self.instance_selected():
+            if self.__is_instance_prod():
+                return
+            url = f'instances/{self.instance_id}'
+            data = self.api.api_delete(url)
+            if valid_response_vultr(data):
+                print(f" {data['status']}: {data['info']}")
 
     def update_firewall(self):
         """
@@ -308,14 +307,15 @@ class Instance:
         Returns:
             None
         """
-        self.fw_obj.get_firewalls()
-        url = f'instances/{self.instance_id}'
-        body = {
-            "firewall_group_id": None
-        }
-        data = self.api.api_patch(url, body)
-        if valid_response_vultr(data):
-            print(f"Firewall updated to {self.fw_obj.firewall_desc}")
+        if self.instance_selected():
+            self.fw_obj.get_firewalls()
+            url = f'instances/{self.instance_id}'
+            body = {
+                "firewall_group_id": None
+            }
+            data = self.api.api_patch(url, body)
+            if valid_response_vultr(data):
+                print(f"Firewall updated to {self.fw_obj.firewall_desc}")
 
     def dns_from_hostname_ip4(self):
         """
@@ -328,22 +328,23 @@ class Instance:
         Returns:
             None
         """
-        self.cf_obj.get_zones() # Select DNS zone
-        if self.instance_ip4 == '0.0.0.0' or self.instance_ip4 == '':
-            print('No IP address assigned yet.')
-            return
-        proxied = False
-        if print_yes_no('DNS Proxied?'):
-            proxied = True
-        body = {
-            "comment": "Added by pyvultr",
-            "content": self.instance_ip4,
-            "name": self.instance_hostname,
-            "proxied": proxied,
-            "ttl": 300,
-            "type": "A"
-        }
-        self.cf_obj.create_update_dns_record(body)
+        if self.instance_selected():
+            self.cf_obj.get_zones() # Select DNS zone
+            if self.instance_ip4 == '0.0.0.0' or self.instance_ip4 == '':
+                print('No IP address assigned yet.')
+                return
+            proxied = False
+            if print_yes_no('DNS Proxied?'):
+                proxied = True
+            body = {
+                "comment": "Added by pyvultr",
+                "content": self.instance_ip4,
+                "name": self.instance_hostname,
+                "proxied": proxied,
+                "ttl": 300,
+                "type": "A"
+            }
+            self.cf_obj.create_update_dns_record(body)
 
     def dns_from_hostname_ip6(self):
         pass
@@ -363,15 +364,30 @@ class Instance:
         Returns:
             None
         """
-        if self.__is_instance_prod():
-            return
-        if ip4:
-            ip = self.instance_ip4
+        if self.instance_selected():
+            if self.__is_instance_prod():
+                return
+            if ip4:
+                ip = self.instance_ip4
+            else:
+                ip = self.instance_ip6
+            self.cf_obj.get_zones()
+            if self.cf_obj.get_dns_record_by_name_content(self.instance_hostname, ip):
+                self.cf_obj.delete_dns_record()
+
+    def instance_selected(self):
+        """
+        Checks whether an instance is currently selected.
+
+        Returns:
+            bool: True if an instance is selected (instance_id is non-empty), False otherwise.
+                  Prints a warning message if no instance is selected.
+        """
+        if self.instance_id != '':
+            return True
         else:
-            ip = self.instance_ip6
-        self.cf_obj.get_zones()
-        if self.cf_obj.get_dns_record_by_name_content(self.instance_hostname, ip):
-            self.cf_obj.delete_dns_record()
+            print(yellow_text('No Instance Selected!'))
+            return False
 
     def __instance_status_color(self, status):
         """

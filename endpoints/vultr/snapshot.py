@@ -67,7 +67,7 @@ class Snapshot:
         Returns:
             None
         """
-        if self.snapshot_id != '':
+        if self.snapshot_selected():
             url = f'snapshots/{self.snapshot_id}'
             data = self.api.api_get(url)
             if valid_response_vultr(data):
@@ -80,8 +80,6 @@ class Snapshot:
                     ['status', self.__snapshot_status_color(data['snapshot']['status'])],
                 ]
                 print_output_table(result)
-        else:
-            print('No Snapshot Selected!')
 
     def create_snapshot(self, ss_name, instance_id):
         """
@@ -116,10 +114,11 @@ class Snapshot:
         Raises:
             Any exceptions raised by the underlying API call or response validation.
         """
-        url = f'snapshots/{self.snapshot_id}'
-        data = self.api.api_delete(url)
-        if valid_response_vultr(data):
-            print(f" {data['status']}: {data['info']}")
+        if self.snapshot_selected():
+            url = f'snapshots/{self.snapshot_id}'
+            data = self.api.api_delete(url)
+            if valid_response_vultr(data):
+                print(f" {data['status']}: {data['info']}")
 
     def update_snapshot(self, ss_name):
         """
@@ -135,13 +134,30 @@ class Snapshot:
             Sends a PUT request to the Vultr API to update the snapshot's description.
             Prints the status and info from the API response if the response is valid.
         """
-        url = f'snapshots/{self.snapshot_id}'
-        body = {
-            "description": ss_name,
-        }
-        data = self.api.api_put(url, body)
-        if valid_response_vultr(data):
-            print(f" {data['status']}: {data['info']}")
+        if self.snapshot_selected():
+            url = f'snapshots/{self.snapshot_id}'
+            body = {
+                "description": ss_name,
+            }
+            data = self.api.api_put(url, body)
+            if valid_response_vultr(data):
+                print(f" {data['status']}: {data['info']}")
+
+    def snapshot_selected(self):
+        """
+        Checks whether a snapshot is currently selected.
+
+        Returns:
+            bool: True if a snapshot is selected, False otherwise.
+
+        Side Effects:
+            Prints a warning message if no snapshot is selected.
+        """
+        if self.snapshot_id != '':
+            return True
+        else:
+            print(yellow_text('No Snapshot Selected!'))
+            return False
 
     def __snapshot_status_color(self, status):
         """
