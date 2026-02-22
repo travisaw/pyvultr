@@ -1,7 +1,6 @@
-from util import utc_str_to_local, print_input_menu, valid_response_vultr, print_output_table, format_currency, print_yes_no, hour_minutee_day_diff, print_text_prompt
+from util import utc_str_to_local, print_input_menu, valid_response_vultr, print_output_table, \
+    format_currency, print_yes_no, hour_minutee_day_diff, print_text_prompt, green_text, yellow_text, red_text
 from data import load_cloud_init_local, load_cloud_init_http
-from colorama import Fore, Style
-from colorama import init as colorama_init
 import settings
 
 class Instance:
@@ -75,7 +74,6 @@ class Instance:
         self.r_obj = r_obj
         self.os_obj = os_obj
         self.ap_obj = ap_obj
-        colorama_init(autoreset=True)
 
     def get_instances(self):
         """
@@ -394,13 +392,13 @@ class Instance:
         """
         match status:
             case 'active':
-                return f'{Fore.GREEN}{status}{Style.RESET_ALL}'
+                return green_text(status)
             case 'pending':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
+                return yellow_text(status)
             case 'suspended':
-                return f'{Fore.RED}{status}{Style.RESET_ALL}'
+                return red_text(status)
             case 'resizing':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
+                return yellow_text(status)
             case _:
                 return status
 
@@ -416,9 +414,9 @@ class Instance:
         """
         match status:
             case 'running':
-                return f'{Fore.GREEN}{status}{Style.RESET_ALL}'
+                return green_text(status)
             case 'stopped':
-                return f'{Fore.RED}{status}{Style.RESET_ALL}'
+                return red_text(status)
             case _:
                 return status
 
@@ -438,13 +436,13 @@ class Instance:
         """
         match status:
             case 'none':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
+                return yellow_text(status)
             case 'locked':
-                return f'{Fore.RED}{status}{Style.RESET_ALL}'
+                return red_text(status)
             case 'installingbooting':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
+                return yellow_text(status)
             case 'ok':
-                return f'{Fore.GREEN}{status}{Style.RESET_ALL}'
+                return green_text(status)
             case _:
                 return status
 

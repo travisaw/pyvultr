@@ -4,6 +4,10 @@ import tzlocal
 import ipaddress
 from tabulate import tabulate
 import settings
+from colorama import Fore, Style
+from colorama import init as colorama_init
+
+colorama_init(autoreset=True)
 
 def utc_str_to_local(utc_string):
     """
@@ -383,3 +387,15 @@ def format_currency(value_as_number):
 def format_option(s):
     """Formats a string by capitalizing each word and replacing underscores with spaces."""
     return ' '.join(word.capitalize() for word in s.strip().split('_'))
+
+def green_text(text):
+    """Wraps text in green ANSI color codes."""
+    return f'{Fore.GREEN}{text}{Style.RESET_ALL}'
+
+def yellow_text(text):
+    """Wraps text in yellow ANSI color codes."""
+    return f'{Fore.YELLOW}{text}{Style.RESET_ALL}'
+
+def red_text(text):
+    """Wraps text in red ANSI color codes."""
+    return f'{Fore.RED}{text}{Style.RESET_ALL}'

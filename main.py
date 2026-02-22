@@ -3,8 +3,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import importlib.util
-from colorama import Fore, Style
-from colorama import init as colorama_init
+from util import yellow_text, red_text
 
 def module_exists(module_name):
     return importlib.util.find_spec(module_name) is not None
@@ -27,11 +26,11 @@ if missing_env:
 
 # Set defaults if parameter doesn't exist
 if not hasattr(settings, 'PRINT_TIMESTAMP'):
-    print(f'{Fore.YELLOW}PRINT_TIMESTAMP setting not found. Disabling.{Style.RESET_ALL}')
+    print(yellow_text('PRINT_TIMESTAMP setting not found. Disabling.'))
     settings.PRINT_TIMESTAMP = False
 
 if not hasattr(settings, 'PRINT_API_RESPONSE_SUMMARY'):
-    print(f'{Fore.YELLOW}PRINT_API_RESPONSE_SUMMARY setting not found. Disabling.{Style.RESET_ALL}')
+    print(yellow_text('PRINT_API_RESPONSE_SUMMARY setting not found. Disabling.'))
     settings.PRINT_API_RESPONSE_SUMMARY = False
 
 # Validate required settings.py variables
@@ -44,24 +43,24 @@ required_settings = [
     'EMAIL_INSTANCE_CREATION']
 missing_settings = [v for v in required_settings if not hasattr(settings, v)]
 if missing_settings:
-    print(f'{Fore.RED}Missing required settings variables: {', '.join(missing_settings)}. EXITING!{Style.RESET_ALL}')
+    print(red_text('Missing required settings variables: {', '.join(missing_settings)}. EXITING!'))
     exit(1)
 
 # Check if preferred IDs exist
 if not hasattr(settings, 'PREFERRED_APPLICATION_IDS'):
-    print(f'{Fore.YELLOW}PREFERRED_APPLICATION_IDS not defined {Style.RESET_ALL}')
+    print(yellow_text('PREFERRED_APPLICATION_IDS not defined '))
     settings.PREFERRED_APPLICATION_IDS = []
 
 if not hasattr(settings, 'PREFERRED_PLAN_IDS'):
-    print(f'{Fore.YELLOW}PREFERRED_PLAN_IDS not defined {Style.RESET_ALL}')
+    print(yellow_text('PREFERRED_PLAN_IDS not defined '))
     settings.PREFERRED_APPLICATION_IDS = []
 
 if not hasattr(settings, 'PREFERRED_REGION_IDS'):
-    print(f'{Fore.YELLOW}PREFERRED_REGION_IDS not defined {Style.RESET_ALL}')
+    print(yellow_text('PREFERRED_REGION_IDS not defined '))
     settings.PREFERRED_APPLICATION_IDS = []
 
 if not hasattr(settings, 'PREFERRED_OS_IDS'):
-    print(f'{Fore.YELLOW}PREFERRED_OS_IDS not defined {Style.RESET_ALL}')
+    print(yellow_text('PREFERRED_OS_IDS not defined '))
     settings.PREFERRED_APPLICATION_IDS = []
 
 BASE_DIR = Path(__file__).resolve().parent.parent # Set base directory

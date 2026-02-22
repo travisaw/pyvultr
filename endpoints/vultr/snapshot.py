@@ -1,6 +1,5 @@
-from util import utc_str_to_local, print_input_menu, valid_response_vultr, format_bytes, print_output_table
-from colorama import Fore, Style
-from colorama import init as colorama_init
+from util import utc_str_to_local, print_input_menu, valid_response_vultr, format_bytes, print_output_table, \
+    green_text, yellow_text, red_text
 
 class Snapshot:
     """
@@ -163,10 +162,10 @@ class Snapshot:
         """
         match status:
             case 'pending':
-                return f'{Fore.YELLOW}{status}{Style.RESET_ALL}'
+                return yellow_text(status)
             case 'complete':
-                return f'{Fore.GREEN}{status}{Style.RESET_ALL}'
+                return green_text(status)
             case 'deleted':
-                return f'{Fore.RED}{status}{Style.RESET_ALL}'
+                return red_text(status)
             case _:
                 return status
