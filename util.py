@@ -399,3 +399,7 @@ def yellow_text(text):
 def red_text(text):
     """Wraps text in red ANSI color codes."""
     return f'{Fore.RED}{text}{Style.RESET_ALL}'
+
+def blue_text(text):
+    """Wraps text in blue ANSI color codes."""
+    return f'{Fore.BLUE}{text}{Style.RESET_ALL}'

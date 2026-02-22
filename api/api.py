@@ -1,5 +1,6 @@
 import requests
 import settings
+from util import green_text, yellow_text, red_text, blue_text
 
 class Api():
     """
@@ -17,6 +18,10 @@ class Api():
     __get_headers()
         Private method that returns the common HTTP request headers used in all API calls.
     """
+
+    green_codes = [200, 204]
+    yellow_codes = [404]
+    red_codes = [500]
 
     def api_get(self, url):
         """
@@ -144,8 +149,49 @@ class Api():
             response (requests.Response): The HTTP response object to summarize.
         """
         if settings.PRINT_API_RESPONSE_SUMMARY:
-            print(f"Response Status Code: {response.status_code}")
-            print(f"Response Time: {response.elapsed.total_seconds()} seconds")
+            url = response.url
+            url_display = url[:50] + "..." if len(url) > 30 else url
+            print(blue_text(f"URL: {url_display}"))
+            print(self.__get_response_code_color(response.status_code))
+            print(self.__get_response_time_color(response.elapsed.total_seconds()))
             # print("Response Headers:")
             # for key, value in response.headers.items():
             #     print(f"{key}: {value}")
+
+    def __get_response_time_color(self, seconds):
+        """
+        Returns a color-formatted string representing the API response time.
+
+        Args:
+            seconds (float): The response time in seconds.
+
+        Returns:
+            str: The response time string colored green (< 3s), yellow (3–8s), or red (> 8s).
+        """
+        response_text = f"Response Time: {seconds} seconds"
+        if seconds < 3:
+            return green_text(response_text)
+        if seconds <= 8:
+            return yellow_text(response_text)
+        return red_text(response_text)
+
+    def __get_response_code_color(self, response_code):
+        """
+        Returns a color-formatted string representing the HTTP response status code.
+
+        Args:
+            response_code (int): The HTTP status code from the response.
+
+        Returns:
+            str: The status code string colored green (2xx success), yellow (404), or red (500).
+                 Returns the raw status code if it does not match any defined category.
+        """
+        response_text = f"Response Status Code: {response_code}"
+        if response_code in self.green_codes:
+            return green_text(response_text)
+        if response_code in self.yellow_codes:
+            return yellow_text(response_text)
+        if response_code in self.red_codes:
+            return red_text(response_text)
+        else:
+            return response_code
