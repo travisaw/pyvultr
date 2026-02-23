@@ -19,9 +19,9 @@ class Api():
         Private method that returns the common HTTP request headers used in all API calls.
     """
 
-    green_codes = [200, 204]
+    green_codes = [200, 201, 204]
     yellow_codes = [404]
-    red_codes = [500]
+    red_codes = [400, 500]
 
     def api_get(self, url):
         """
@@ -194,4 +194,4 @@ class Api():
         if response_code in self.red_codes:
             return red_text(response_text)
         else:
-            return response_code
+            return response_text
