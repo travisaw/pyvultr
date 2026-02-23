@@ -41,26 +41,27 @@ required_settings = [
     'PREFERRED_OS_ONLY',
     'INSTANCE_TAGS',
     'EMAIL_INSTANCE_CREATION']
+
 missing_settings = [v for v in required_settings if not hasattr(settings, v)]
 if missing_settings:
-    print(red_text('Missing required settings variables: {', '.join(missing_settings)}. EXITING!'))
+    print(red_text(f'Missing required settings variables: {', '.join(missing_settings)}. EXITING!'))
     exit(1)
 
 # Check if preferred IDs exist
 if not hasattr(settings, 'PREFERRED_APPLICATION_IDS'):
-    print(yellow_text('PREFERRED_APPLICATION_IDS not defined '))
+    print(yellow_text(f'PREFERRED_APPLICATION_IDS not defined'))
     settings.PREFERRED_APPLICATION_IDS = []
 
 if not hasattr(settings, 'PREFERRED_PLAN_IDS'):
-    print(yellow_text('PREFERRED_PLAN_IDS not defined '))
+    print(yellow_text(f'PREFERRED_PLAN_IDS not defined'))
     settings.PREFERRED_APPLICATION_IDS = []
 
 if not hasattr(settings, 'PREFERRED_REGION_IDS'):
-    print(yellow_text('PREFERRED_REGION_IDS not defined '))
+    print(yellow_text(f'PREFERRED_REGION_IDS not defined'))
     settings.PREFERRED_APPLICATION_IDS = []
 
 if not hasattr(settings, 'PREFERRED_OS_IDS'):
-    print(yellow_text('PREFERRED_OS_IDS not defined '))
+    print(yellow_text(f'PREFERRED_OS_IDS not defined'))
     settings.PREFERRED_APPLICATION_IDS = []
 
 BASE_DIR = Path(__file__).resolve().parent.parent # Set base directory
