@@ -163,8 +163,10 @@ class Menu():
             {'id': 5, 'name': 'Update Firewall'},
             {'id': 6, 'name': 'Create IP4 DNS Name from Hostname'},
             {'id': 7, 'name': 'Create IP6 DNS Name from Hostname'},
-            {'id': 8, 'name': 'Delete IP4 DNS Name'},
-            {'id': 9, 'name': 'Go Back'},
+            {'id': 8, 'name': 'Delete IP4 DNS Name from Hostname'},
+            {'id': 9, 'name': 'Create IP4 DNS Name from IP'},
+            {'id': 10, 'name': 'Create IP6 DNS Name from IP'},
+            {'id': 11, 'name': 'Go Back'},
         ]
         option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
         match option:
@@ -193,6 +195,12 @@ class Menu():
                 self.obj_i.delete_dns(True)
                 self.instance()
             case '9':
+                self.obj_i.dns_from_ip4()
+                self.instance()
+            case '10':
+                self.obj_i.dns_from_ip6()
+                self.instance()
+            case '11':
                 self.main_menu()
 
     def firewall(self):

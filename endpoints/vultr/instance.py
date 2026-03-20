@@ -317,7 +317,7 @@ class Instance:
             if valid_response_vultr(data):
                 print(f"Firewall updated to {self.fw_obj.firewall_desc}")
 
-    def dns_from_hostname_ip4(self):
+    def dns_from_ip4(self, hostname = None):
         """
         Creates or updates an A record in the DNS zone for the instance's hostname and IPv4 address.
 
@@ -329,6 +329,8 @@ class Instance:
             None
         """
         if self.instance_selected():
+            if not hostname:
+                hostname = print_text_prompt('Hostname:')
             self.cf_obj.get_zones() # Select DNS zone
             if self.instance_ip4 == '0.0.0.0' or self.instance_ip4 == '':
                 print('No IP address assigned yet.')
@@ -339,12 +341,19 @@ class Instance:
             body = {
                 "comment": "Added by pyvultr",
                 "content": self.instance_ip4,
-                "name": self.instance_hostname,
+                "name": hostname,
                 "proxied": proxied,
                 "ttl": 300,
                 "type": "A"
             }
             self.cf_obj.create_update_dns_record(body)
+
+    def dns_from_ip6(self):
+        pass
+
+    def dns_from_hostname_ip4(self):
+        if self.instance_selected():
+            self.dns_from_ip4(self.instance_hostname)
 
     def dns_from_hostname_ip6(self):
         pass
