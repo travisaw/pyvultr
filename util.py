@@ -286,7 +286,10 @@ def valid_response_vultr(output):
               True otherwise.
     """
     if output.get('error'):
-        print(f' {output['error_detail']['status']}: {output['error_detail']['error']}')
+        detail = output['error_detail']
+        status = detail.get('status', output['error'])
+        error = detail.get('error', detail.get('info', 'Unknown error'))
+        print(f' {status}: {error}')
         return False
     else:
         return True
