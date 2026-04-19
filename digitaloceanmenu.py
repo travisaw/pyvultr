@@ -2,13 +2,13 @@
 # from endpoints.vultr.account import get_account_info
 # from endpoints.vultr.application import Application
 # from endpoints.vultr.instance import Instance
-# from endpoints.vultr.firewall import Firewall
+from endpoints.digitalocean.firewall import Firewall
 # from endpoints.vultr.os import OS
 # from endpoints.vultr.plan import Plan
 # from endpoints.vultr.region import Region
 # from endpoints.vultr.snapshot import Snapshot
 # from endpoints.cloudflare.zone import Zone
-# from endpoints.ipify import Ipify
+from endpoints.ipify import Ipify
 from util import print_input_menu #, print_text_prompt
 
 class DigitalOceanMenu():
@@ -20,8 +20,8 @@ class DigitalOceanMenu():
         """
         self.digitalocean_api = digitalocean_api    # Digital Ocean API Object
         self.cloudflare_api = cloudflare_api        # Cloudflare API Object
-        # self.obj_ip = Ipify()                     # Ipify Zone Object
-        # self.obj_fw = Firewall(self.digitalocean_api, self.obj_ip) # Firewall Object
+        self.obj_ip = Ipify()                     # Ipify Zone Object
+        self.obj_fw = Firewall(self.digitalocean_api, self.obj_ip) # Firewall Object
         # self.obj_r = Region(self.digitalocean_api)       # Vultr Region Object
         # self.obj_p = Plan(self.digitalocean_api, self.obj_r) # Vultr Compute Plan Object
         # self.obj_ss = Snapshot(self.digitalocean_api)    # Vultr Snapshot Object
@@ -40,7 +40,7 @@ class DigitalOceanMenu():
         options = [
             # {'id': 1, 'name': 'Account'},
             # {'id': 2, 'name': 'Instances'},
-            # {'id': 3, 'name': 'Firewall'},
+            {'id': 1, 'name': 'Firewall'},
             # {'id': 4, 'name': 'Snapshot'},
             # {'id': 5, 'name': 'Compute Regions'},
             # {'id': 6, 'name': 'Compute Plans'},
@@ -56,8 +56,8 @@ class DigitalOceanMenu():
             #     self.account()
             # case '2':
             #     self.instance()
-            # case '3':
-            #     self.firewall()
+            case '1':
+                self.firewall()
             # case '4':
             #     self.snapshot()
             # case '5':
@@ -160,68 +160,53 @@ class DigitalOceanMenu():
     #         case '11':
     #             self.main_menu()
 
-    # def firewall(self):
-    #     """
-    #     Displays the Vultr Firewall Menu and handles user interactions for firewall management.
+    def firewall(self):
+        """
 
-    #     This method presents a menu with options to show, create, or delete firewalls and firewall rules,
-    #     as well as to add the current IP to firewall rules. Based on the user's selection, it calls the
-    #     corresponding methods from the firewall object (`self.obj_fw`). The menu loops after each action
-    #     until the user chooses to go back to the main menu.
-
-    #     Menu Options:
-    #         1. Show Firewalls
-    #         2. Show Selected Firewall
-    #         3. Create Firewall
-    #         4. Delete Firewall
-    #         5. Show Firewall Rules
-    #         6. Delete All Firewall Rules
-    #         7. Add Current IP to Firewall Rules
-    #         8. Go Back to Main Menu
-    #     """
-    #     options = [
-    #         {'id': 1, 'name': 'Show Firewalls'},
-    #         {'id': 2, 'name': 'Show Selected Firewall'},
-    #         {'id': 3, 'name': 'Create Firewall'},
-    #         {'id': 4, 'name': 'Delete Firewall'},
-    #         {'id': 5, 'name': 'Show Firewall Rules'},
-    #         {'id': 6, 'name': 'Delete All Firewall Rules'},
-    #         {'id': 7, 'name': 'Delete Firewall Rules by Note'},
-    #         {'id': 8, 'name': 'Add Current IP4 to Firewall Rules'},
-    #         {'id': 9, 'name': 'Add Current IP6 to Firewall Rules'},
-    #         {'id': 10, 'name': 'Go Back'},
-    #     ]
-    #     option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
-    #     match option:
-    #         case '1':
-    #             self.obj_fw.get_firewalls()
-    #             self.firewall()
-    #         case '2':
-    #             self.obj_fw.print_firewall()
-    #             self.firewall()
-    #         case '3':
-    #             self.obj_fw.create_firewall_prompt()
-    #             self.firewall()
-    #         case '4':
-    #             self.obj_fw.delete_firewall()
-    #             self.firewall()
-    #         case '5':
-    #             self.obj_fw.print_firewall_rules()
-    #             self.firewall()
-    #         case '6':
-    #             self.obj_fw.delete_all_firewall_rules()
-    #             self.firewall()
-    #         case '7':
-    #             self.obj_fw.delete_firewall_rule_with_notes()
-    #             self.firewall()
-    #         case '8':
-    #             self.obj_fw.add_ip4_to_firewall_rules()
-    #             self.firewall()
-    #         case '9':
-    #             self.obj_fw.add_ip6_to_firewall_rules()
-    #             self.firewall()
-    #         case '10':
-    #             self.main_menu()
+        """
+        options = [
+            {'id': 1, 'name': 'Show Firewalls'},
+            {'id': 2, 'name': 'Show Selected Firewall'},
+            # {'id': 3, 'name': 'Create Firewall'},
+            # {'id': 4, 'name': 'Delete Firewall'},
+            # {'id': 5, 'name': 'Show Firewall Rules'},
+            # {'id': 6, 'name': 'Delete All Firewall Rules'},
+            # {'id': 7, 'name': 'Delete Firewall Rules by Note'},
+            # {'id': 8, 'name': 'Add Current IP4 to Firewall Rules'},
+            # {'id': 9, 'name': 'Add Current IP6 to Firewall Rules'},
+            {'id': 10, 'name': 'Go Back'},
+        ]
+        option, inst_list = print_input_menu(options, 'What action?: ', 'id', ['name'], False)
+        match option:
+            case '1':
+                self.obj_fw.get_firewalls()
+                self.firewall()
+            case '2':
+                self.obj_fw.print_firewall()
+                self.firewall()
+            # case '3':
+            #     self.obj_fw.create_firewall_prompt()
+            #     self.firewall()
+            # case '4':
+            #     self.obj_fw.delete_firewall()
+            #     self.firewall()
+            # case '5':
+            #     self.obj_fw.print_firewall_rules()
+            #     self.firewall()
+            # case '6':
+            #     self.obj_fw.delete_all_firewall_rules()
+            #     self.firewall()
+            # case '7':
+            #     self.obj_fw.delete_firewall_rule_with_notes()
+            #     self.firewall()
+            # case '8':
+            #     self.obj_fw.add_ip4_to_firewall_rules()
+            #     self.firewall()
+            # case '9':
+            #     self.obj_fw.add_ip6_to_firewall_rules()
+            #     self.firewall()
+            case '10':
+                self.main_menu()
 
     # def snapshot(self):
     #     """

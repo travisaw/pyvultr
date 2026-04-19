@@ -17,7 +17,7 @@ class Menu():
         """
         # Load APIs using keys from config file. Display main menu.
         self.vultr_api = Vultr(api_keys['vultr_api_key'])
-        self.digitalocean_api = DigitalOcean(api_keys['vultr_api_key'])
+        self.digitalocean_api = DigitalOcean(api_keys['digitalocean_api_key'])
         self.cloudflare_api = Cloudflare(api_keys['cloudflare_email'], api_keys['cloudflare_api_key'])
 
     def main_menu(self):

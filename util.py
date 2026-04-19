@@ -315,6 +315,16 @@ def valid_response_cloudflare(output):
     else:
         return True
 
+def valid_response_digitalocean(output):
+    if output.get('error'):
+        detail = output['error_detail']
+        status = output['error']
+        message = detail.get('message', detail.get('info', 'Unknown error'))
+        print(f' {status}: {message}')
+        return False
+    else:
+        return True
+
 def ip6_network_prefix(ip6_address):
     """
     Given an IPv6 address (with optional prefix), return the corresponding IPv6 network.
