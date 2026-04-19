@@ -17,7 +17,7 @@ import settings
 load_dotenv()  # loads the configs from .env
 
 # Validate required .env variables
-required_env_vars = ['VULTR_API_KEY', 'CLOUDFLARE_EMAIL', 'CLOUDFLARE_API_KEY']
+required_env_vars = ['VULTR_API_KEY', 'DIGITALOCEAN_API_KEY', 'CLOUDFLARE_EMAIL', 'CLOUDFLARE_API_KEY']
 missing_env = [v for v in required_env_vars if not os.getenv(v)]
 if missing_env:
     print(f"Missing required .env variables: {', '.join(missing_env)}")
@@ -67,11 +67,18 @@ if not hasattr(settings, 'PREFERRED_OS_IDS'):
 BASE_DIR = Path(__file__).resolve().parent.parent # Set base directory
 
 from api.vultr import Vultr
+from api.digitalocean import DigitalOcean
 from api.cloudflare import Cloudflare
-from menu import Menu
+from vultrmenu import VultrMenu
 
 # Load APIs using keys from config file. Display main menu.
-vultr_api = Vultr(str(os.getenv('VULTR_API_KEY')))
-cloudflare_api = Cloudflare(str(os.getenv('CLOUDFLARE_EMAIL')), str(os.getenv('CLOUDFLARE_API_KEY')))
-menu = Menu(vultr_api, cloudflare_api)
-menu.main_menu()
+api_keys = dict(
+    vultr_api_key = str(os.getenv('VULTR_API_KEY')),
+    digitalocean_api_key = str(os.getenv('DIGITALOCEAN_API_KEY')),
+    cloudflare_email = str(os.getenv('CLOUDFLARE_EMAIL')),
+    cloudflare_api_key = str(os.getenv('CLOUDFLARE_API_KEY'))
+)
+
+from menu import Menu
+mainmenu = Menu(api_keys)
+mainmenu.main_menu()
